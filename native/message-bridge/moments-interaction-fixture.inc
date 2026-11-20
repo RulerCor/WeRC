@@ -1,0 +1,51 @@
+    {
+        WercPacket action{};action.operation=58;action.message_id=42;action.dropped=1;
+        action.deadline=uint64_t(std::time(nullptr))+60;
+        strcpy_s(binding.account,"owned-self");strcpy_s(action.account,"owned-self");strcpy_s(action.target,"owned-self");
+        strcpy_s(action.attempt,"owned-sns-action");std::memset(action.digest,'a',64);
+        receipt_count=1;receipts[0]={};strcpy_s(receipts[0].attempt,action.attempt);strcpy_s(receipts[0].target,action.target);strcpy_s(receipts[0].digest,action.digest);receipts[0].kind=23;receipts[0].evidence=0;
+        check(interaction_dispatch(action)==0&&action.receipt==0&&!live_tasks,"SNS duplicate attempt is receipt-only even when unknown");
+        action.present=0;action.message_id=42;action.dropped=1;action.digest[0]='b';
+        check(interaction_dispatch(action)==ERROR_INVALID_DATA,"SNS changed request digest rejected");action.digest[0]='a';
+        action.operation=59;action.dropped=0;
+        check(interaction_dispatch(action)==ERROR_INVALID_DATA,"SNS lookup cannot reuse write attempt");
+        action.operation=58;action.dropped=1;strcpy_s(action.text,"text");
+        check(interaction_dispatch(action)==ERROR_INVALID_PARAMETER,"SNS like rejects text");
+        action.text[0]=0;action.dropped=2;
+        check(interaction_dispatch(action)==ERROR_INVALID_PARAMETER,"SNS empty comment rejected");
+        strcpy_s(action.text,"owned");action.message_id=0;
+        check(interaction_dispatch(action)==ERROR_INVALID_PARAMETER,"SNS zero id rejected");
+        action.message_id=42;strcpy_s(action.target,"other");
+        check(interaction_dispatch(action)==ERROR_INVALID_PARAMETER,"SNS account target bound");
+        strcpy_s(action.target,"owned-self");
+        action.dropped=3;
+        check(interaction_dispatch(action)==ERROR_INVALID_PARAMETER,"SNS unlike rejects text");
+        action.dropped=4;
+        check(interaction_dispatch(action)==ERROR_INVALID_PARAMETER,"SNS delete rejects text");
+        action.dropped=5;
+        check(interaction_dispatch(action)==ERROR_INVALID_PARAMETER,"SNS reply requires exact comment identity");
+        action.sequence=42;strcpy_s(action.text+896,128,"owned-user");
+        check(interaction_dispatch(action)==0&&!live_tasks,"SNS reply duplicate never enters native call");
+        clear_receipts();
+    }
+    {
+        alignas(16) unsigned char owner[0x1e8]{};
+        alignas(16) unsigned char post[0x90]{};
+        *reinterpret_cast<uintptr_t*>(owner)=core_base+0x93ff9d8;
+        auto object=owner+0x10;
+        *reinterpret_cast<uint32_t*>(object)=42;
+        *reinterpret_cast<uint64_t*>(object+8)=UINT64_MAX;
+        auto username=reinterpret_cast<SmallString*>(object+0x10);
+        std::memcpy(username->data,"owned-user",10);username->length=10;username->capacity=15;
+        SharedMessage comments[2]{{object,owner},{object,owner}};
+        auto list=reinterpret_cast<sns_interaction_call::Vector*>(post+0x70);
+        *list={comments,comments+1,comments+2};
+        SharedMessage item{post,nullptr};
+        check(sns_interaction_call::find_reply(&item,42,UINT64_MAX,"owned-user")==comments,"SNS reply matches full64 comment id and author");
+        check(!sns_interaction_call::find_reply(&item,43,UINT64_MAX,"owned-user"),"SNS reply rejects contradictory id32");
+        check(!sns_interaction_call::find_reply(&item,42,UINT64_MAX,"other"),"SNS reply rejects different author");
+        list->end=comments+2;
+        check(!sns_interaction_call::find_reply(&item,42,UINT64_MAX,"owned-user"),"SNS reply rejects ambiguous duplicate comments");
+        list->end=comments+1;*reinterpret_cast<uintptr_t*>(owner)=0;
+        check(!sns_interaction_call::find_reply(&item,42,UINT64_MAX,"owned-user"),"SNS reply refuses unknown model layout");
+    }

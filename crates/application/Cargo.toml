@@ -1,0 +1,22 @@
+[package]
+name = "werc-application"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+werc-domain.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+chrono.workspace = true
+uuid.workspace = true
+sha2.workspace = true
+hmac.workspace = true
+hex.workspace = true
+zeroize.workspace = true
+aes-gcm.workspace = true
+getrandom.workspace = true
+pbkdf2 = "=0.12.2"
+rust_xlsxwriter = { version = "=0.96.0", default-features = false }
+
+zip = { version = "=7.4.0", default-features = false }

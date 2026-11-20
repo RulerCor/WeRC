@@ -1,0 +1,46 @@
+[package]
+name = "werc-desktop"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[features]
+custom-protocol = ["tauri/custom-protocol"]
+
+[lib]
+name = "werc_desktop_lib"
+# This workspace ships a Windows executable; no external C/mobile library consumes it.
+crate-type = ["rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+zeroize.workspace = true
+pbkdf2 = "=0.12.2"
+getrandom.workspace = true
+tauri = { version = "2", features = ["tray-icon"] }
+tauri-plugin-updater = { version = "=2.14.1", default-features = false, features = ["native-tls", "zip"] }
+werc-domain.workspace = true
+werc-application.workspace = true
+werc-infrastructure.workspace = true
+werc-wechat-win.workspace = true
+werc-http-api.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tokio.workspace = true
+reqwest = { version = "=0.13.5", default-features = false, features = ["native-tls"] }
+sha2.workspace = true
+hex.workspace = true
+uuid.workspace = true
+tar = "=0.4.46"
+bzip2 = "=0.6.1"
+zip = { version = "=7.4.0", default-features = false, features = ["deflate"] }
+
+[target.'cfg(windows)'.dependencies]
+windows-future = "=0.3.2"
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_UI_Controls_Dialogs", "Win32_Storage_FileSystem", "Win32_System_Registry", "Win32_Security"] }
+
+[target.'cfg(windows)'.dependencies.windows]
+version = "=0.62.2"
+features = ["Security_Credentials_UI", "Win32_System_WinRT", "Win32_UI_Shell", "Win32_UI_Shell_Common", "Win32_UI_WindowsAndMessaging", "Win32_System_Com", "Win32_Foundation"]

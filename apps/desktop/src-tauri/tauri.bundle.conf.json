@@ -1,0 +1,37 @@
+{
+  "bundle": {
+    "windows": {
+      "nsis": {
+        "compression": "zlib"
+      }
+    },
+    "resources": {
+      "../../../target/release/werc-native-worker.exe": "werc-native-worker.exe",
+      "../../../target/release/werc-message-host.exe": "werc-message-host.exe",
+      "../../../target/release/werc-message-bridge.dll": "werc-message-bridge.dll",
+      "../../../target/release/werc-voice-codec.exe": "werc-voice-codec.exe",
+      "../../../target/release/werc-emoticon-codec.exe": "werc-emoticon-codec.exe",
+      "../../../target/release/werc-sqlcipher-worker.exe": "werc-sqlcipher-worker.exe",
+      "../../../target/release/werc-mcp-stdio.exe": "werc-mcp-stdio.exe",
+      "../../../target/release-resources/asr/": "asr/",
+      "../../../target/release-resources/licenses/": "licenses/",
+      "../../../target/release-resources/open-source-components/": "open-source-components/",
+      "../../../target/release-resources/usage.md": "usage.md",
+      "../../../target/release-resources/bot-client.md": "bot-client.md",
+      "../../../target/release-resources/API接口文档.html": "API接口文档.html",
+      "../../../target/release-resources/release-notes.md": "release-notes.md",
+      "../../../target/release-resources/openapi.json": "openapi.json",
+      "../../../target/release-resources/README.txt": "README.txt",
+      "../../../target/release-resources/concrt140.dll": "concrt140.dll",
+      "../../../target/release-resources/msvcp140_1.dll": "msvcp140_1.dll",
+      "../../../target/release-resources/msvcp140_2.dll": "msvcp140_2.dll",
+      "../../../target/release-resources/msvcp140_atomic_wait.dll": "msvcp140_atomic_wait.dll",
+      "../../../target/release-resources/msvcp140_codecvt_ids.dll": "msvcp140_codecvt_ids.dll",
+      "../../../target/release-resources/msvcp140.dll": "msvcp140.dll",
+      "../../../target/release-resources/vccorlib140.dll": "vccorlib140.dll",
+      "../../../target/release-resources/vcruntime140_1.dll": "vcruntime140_1.dll",
+      "../../../target/release-resources/vcruntime140_threads.dll": "vcruntime140_threads.dll",
+      "../../../target/release-resources/vcruntime140.dll": "vcruntime140.dll"
+    }
+  }
+}

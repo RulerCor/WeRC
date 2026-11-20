@@ -1,0 +1,42 @@
+{
+  "id": "windows-x64-cuda12.8-cudnn9.8-sherpa2.0.1",
+  "minimum_windows_driver": "570.65",
+  "packages": [
+    {
+      "id": "sherpa",
+      "format": "tar.bz2",
+      "size": 597231017,
+      "sha256": "cd983fa95431a8a08555b15005e1effd0b771f161d30f7f3bd52d518da48f6b6",
+      "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/v2.0.1/sherpa-onnx-v2.0.1-cuda-12.x-cudnn-9.x-onnxruntime1.28.2-win-x64-cuda.tar.bz2"
+    },
+    {
+      "id": "cudart",
+      "format": "zip",
+      "size": 3037735,
+      "sha256": "4a39058fd8519444a81cfc7ae055d136f48d1a31ffa41ae255b35b2edd61e13b",
+      "url": "https://developer.download.nvidia.com/compute/cuda/redist/cuda_cudart/windows-x86_64/cuda_cudart-windows-x86_64-12.8.90-archive.zip"
+    },
+    {
+      "id": "cublas",
+      "format": "zip",
+      "size": 563660944,
+      "sha256": "57a470112cec7e112c95253dde8b3c7184d795dbd92b0bde77a4cb7f8c94c8aa",
+      "url": "https://developer.download.nvidia.com/compute/cuda/redist/libcublas/windows-x86_64/libcublas-windows-x86_64-12.8.4.1-archive.zip"
+    },
+    {
+      "id": "cudnn",
+      "format": "zip",
+      "size": 675349654,
+      "sha256": "d8a23705e3884b137b7e05449fb2b61bfa524e7cfc3fda80743d633f423c6ce4",
+      "url": "https://developer.download.nvidia.com/compute/cudnn/redist/cudnn/windows-x86_64/cudnn-windows-x86_64-9.8.0.87_cuda12-archive.zip"
+    },
+    {
+      "id": "paraformer",
+      "format": "tar.bz2",
+      "size": 77920048,
+      "sha256": "da92b3db5218c5be53aad53e57d1b6e63e7fc98a0e054fbdd6dbe18e9c6b1450",
+      "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-paraformer-zh-small-2024-03-09.tar.bz2"
+    }
+  ],
+  "notes": "User-initiated runtime only; never installs or changes the GPU driver. NVIDIA hashes from redistrib_12.8.1.json and redistrib_9.8.0.json; sherpa archive hash computed from official release download. Includes a small Chinese Paraformer model for first use; an existing model is preserved."
+}

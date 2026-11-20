@@ -1,0 +1,41 @@
+[workspace]
+resolver = "2"
+exclude = ["vendor/mp4parse"]
+members = ["crates/domain", "crates/application", "crates/infrastructure", "crates/wechat-win", "crates/http-api", "crates/native-worker", "crates/data-reader", "crates/db-crypto", "apps/desktop/src-tauri"]
+default-members = ["crates/domain", "crates/application", "crates/infrastructure", "crates/wechat-win", "crates/http-api", "crates/native-worker"]
+
+[profile.release]
+strip = "symbols"
+debug = 0
+incremental = false
+
+[workspace.package]
+version = "1.2.1"
+edition = "2024"
+publish = false
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["float_roundtrip"] }
+thiserror = "2"
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1", features = ["v4", "serde"] }
+sha2 = "0.10"
+hmac = "0.12"
+hex = "0.4"
+zeroize = "1"
+aes-gcm = "0.10"
+getrandom = "0.3"
+subtle = "2"
+rusqlite = { version = "0.37", features = ["bundled"] }
+tokio = { version = "1", features = ["rt-multi-thread", "net", "sync", "time", "macros", "signal"] }
+axum = { version = "0.8", features = ["multipart"] }
+tower = { version = "0.5", features = ["util"] }
+http-body-util = "0.1"
+futures-util = "0.3"
+async-stream = "0.3"
+werc-domain = { path = "crates/domain" }
+werc-application = { path = "crates/application" }
+werc-infrastructure = { path = "crates/infrastructure" }
+werc-wechat-win = { path = "crates/wechat-win" }
+werc-http-api = { path = "crates/http-api" }

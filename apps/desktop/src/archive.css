@@ -1,0 +1,41 @@
+/* Shared layout for local archive tools. Secondary actions stay in disclosures. */
+.local-tools { min-width:0; border:1px solid var(--line); padding:16px; background:var(--surface); }
+.local-tools + .local-tools { margin-top:16px; }
+.local-tools > summary { font-weight:650; cursor:pointer; padding:4px 0; }
+.local-tools[open] > summary { margin-bottom:16px; }
+.local-tools > form { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin:16px 0; }
+.local-tools > form > :is(details,fieldset,.actions) { grid-column:1 / -1; }
+.local-tools label { display:flex; flex-direction:column; gap:8px; min-width:0; font-size:13px; }
+.local-tools label:has(> input[type="checkbox"]) { flex-direction:row; align-items:center; gap:10px; min-height:44px; }
+.local-tools input[type="checkbox"] { width:18px; height:18px; padding:0; flex:0 0 18px; accent-color:var(--text); }
+.local-tools fieldset { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); border:1px solid var(--line); gap:4px 12px; margin:0; padding:12px; min-width:0; }
+.local-tools legend { font-size:12px; color:var(--muted); padding:0 6px; }
+.local-tools textarea { display:block; width:100%; min-width:0; min-height:90px; padding:10px; border:1px solid var(--line); background:var(--surface); color:var(--text); font:inherit; resize:vertical; }
+.local-tools details { padding:12px 0; border-top:1px solid var(--line); }
+.local-tools details > summary { cursor:pointer; font-weight:600; overflow-wrap:anywhere; }
+.local-tools details[open] > summary { margin-bottom:12px; }
+.local-tools details > label + label { margin-top:12px; }
+.local-tools .actions { flex-wrap:wrap; justify-content:flex-start; align-items:end; margin:12px 0; }
+.local-tools .actions > label { flex:1 1 180px; }
+.local-tools p { margin:8px 0; }
+.local-tools ul, .local-tools ol { padding-left:22px; overflow-wrap:anywhere; }
+.local-tools li { margin:8px 0; }
+.local-tools progress { width:100%; height:8px; accent-color:var(--text); }
+.local-tools table { width:100%; border-collapse:collapse; font-size:13px; table-layout:fixed; }
+.local-tools th, .local-tools td { border-bottom:1px solid var(--line); padding:9px; text-align:left; overflow-wrap:anywhere; }
+.local-report { border:0; padding:0; background:transparent; }
+.local-report dl { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin:16px 0; }
+.local-report dt { color:var(--muted); font-size:12px; }
+.local-report dd { margin:6px 0 0; overflow-wrap:anywhere; }
+.local-tools :is(pre,code) { overflow-wrap:anywhere; white-space:pre-wrap; }
+dialog { max-width:min(540px,calc(100vw - 32px)); border:1px solid var(--line); background:var(--surface); color:var(--text); padding:24px; }
+dialog::backdrop { background:rgb(0 0 0 / .4); }
+dialog p { margin:16px 0; }
+dialog .actions { flex-wrap:wrap; }
+@media(max-width:600px) {
+  .local-tools { padding:12px; }
+  .local-tools > form, .local-report dl { grid-template-columns:minmax(0,1fr); }
+  .local-tools fieldset { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .local-tools .actions > label { flex-basis:100%; }
+  .local-tools .button { white-space:normal; }
+}

@@ -1,0 +1,207 @@
+{
+  "schema_version": 1,
+  "repository": "https://github.com/Prometheus-first/helper",
+  "commit": null,
+  "source": "User supplied helper-main.zip",
+  "zip_sha256": "16b1d83afe480fff06c11f8c5a3fcd7db273da2cd958dc84eec994738b8d127a",
+  "license": "LicenseRef-helper-noncommercial-1.0",
+  "scope": "Personal noncommercial use confirmed 2026-11-11",
+  "prebuilt_binaries_imported": false,
+  "files": [
+    {
+      "path": "LICENSE",
+      "size": 3071,
+      "sha256": "5339b5d2b3f8a5f33cd8dba07020d0e304f2c92f14d3ce4a332c5d23c3f163bd"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "size": 1205,
+      "sha256": "747a95cbf0e2a285890c4c78c73d3d24be64d156b0b736e3811b808fce39b7b3"
+    },
+    {
+      "path": "native/article_bridge.cpp",
+      "size": 32504,
+      "sha256": "c3fed4ec7697730f6085ea6d28cc7762d9522aabc89cbc20f9a33cb4cf163b82"
+    },
+    {
+      "path": "native/compatibility.json",
+      "size": 928,
+      "sha256": "e2dae78d028a300feb767ad01a4e128c7d2a5e2db037add4e15505b89e097709"
+    },
+    {
+      "path": "native/core_version.h",
+      "size": 12653,
+      "sha256": "18af2225fd3d745ffc65e6bc1ec7d0669e909b7227e9fdd1e31d670ec60a433c"
+    },
+    {
+      "path": "native/emoticon_send.h",
+      "size": 14278,
+      "sha256": "80d35acf54922d28046375db1e860a8fa7b3f2a092c68fb3bdee2a6e1bb2f980"
+    },
+    {
+      "path": "native/file_download.h",
+      "size": 13173,
+      "sha256": "24a202d7b8c148d377cdbf5996c568de1067cee08376eee11dd07e16772a05e5"
+    },
+    {
+      "path": "native/file_send.h",
+      "size": 17933,
+      "sha256": "d6e944f6ba3eda7b8b755f5c966d84a640d740f32433eea47c61c14fb6a8bb16"
+    },
+    {
+      "path": "native/friend_add.h",
+      "size": 8237,
+      "sha256": "4b370909407575c971191741e9ea21053384069c03218386fb734eda84462f34"
+    },
+    {
+      "path": "native/friend_receive.h",
+      "size": 4711,
+      "sha256": "9a71389c72e89f3dfea45ba5adb35eb6d86957b2978e88e757e29d974c24901a"
+    },
+    {
+      "path": "native/friend_request.h",
+      "size": 10087,
+      "sha256": "76a9a0f7e2ed9dbac19991045df0ba99793c2e2be6667f25950d867306193d89"
+    },
+    {
+      "path": "native/group_management.h",
+      "size": 13590,
+      "sha256": "42c1f0e8cc1ee6ec614efdc1c86e30b65cc032e244c51d7056759b72b454e329"
+    },
+    {
+      "path": "native/image_download.h",
+      "size": 20479,
+      "sha256": "f8605bc47ac39827aa5debfd2df729f7683d4552711805b9b74239566e8a0799"
+    },
+    {
+      "path": "native/image_send.h",
+      "size": 11276,
+      "sha256": "5c37c691a1ad4cbe8f750029541bcc1a856c267ca5937f7b1ac3602275e48cb0"
+    },
+    {
+      "path": "native/local_recall.h",
+      "size": 6278,
+      "sha256": "e5afc979f0ef60360d884f34ac6701bc4a07e84d4179264b1588f1994c661813"
+    },
+    {
+      "path": "native/moments_interaction_bridge.h",
+      "size": 28658,
+      "sha256": "107f830c18d52c81b3041be204aa3eec45cc5cae2832c3361e59189ce8dbc02b"
+    },
+    {
+      "path": "native/moments_interaction_call.h",
+      "size": 8088,
+      "sha256": "1871f4a54a9d4aaf2393ddf9387aeb7930e6fd81226542a568b6992f61201436"
+    },
+    {
+      "path": "native/moments_send.h",
+      "size": 45207,
+      "sha256": "736df659770ec182778cc18a60c534463b536423ac3921e38aba0f8707af7ea3"
+    },
+    {
+      "path": "native/moments_task_lifetime.h",
+      "size": 4814,
+      "sha256": "e0422a2c240876b813c19641dad4a1cacfac07006978edb6f5c842af3524d68d"
+    },
+    {
+      "path": "native/quote_send.h",
+      "size": 9568,
+      "sha256": "06dd560b1b9710208066df3289cea4d5dcf30923a3524e60c582ca597ba214dd"
+    },
+    {
+      "path": "native/README.md",
+      "size": 7658,
+      "sha256": "e817c43bdba1b66e447e1ab4990139db54f88cc3b57cf8fbed90bb97eea2f28c"
+    },
+    {
+      "path": "native/selftest_bridge.cpp",
+      "size": 35385,
+      "sha256": "3992eb603d568586f1e8ae3222c9bf527bb9ef434ed52aca9973b36d87a113e6"
+    },
+    {
+      "path": "native/text_bridge.cpp",
+      "size": 33557,
+      "sha256": "f56434dfa46ffa106949374cb44abee4c313678379860fdaac9c3dc6adf28a35"
+    },
+    {
+      "path": "native/voice_send.h",
+      "size": 12382,
+      "sha256": "fb1cef276bcd78afcbeb788607fa242ea6db96226304f51e4c983dbd7318ce05"
+    },
+    {
+      "path": "native/vendor/minhook-1.3.4/AUTHORS.txt",
+      "size": 214,
+      "sha256": "073b4e8b0a5a0cd9f4dfa838369f4fc7a4f47151d930b4e1fd891644060a897f"
+    },
+    {
+      "path": "native/vendor/minhook-1.3.4/LICENSE.txt",
+      "size": 4365,
+      "sha256": "d5c2224982b0b95a16b098a561335fa93f3eaf4d0aa964b7843edb986df78dc8"
+    },
+    {
+      "path": "native/vendor/minhook-1.3.4/include/MinHook.h",
+      "size": 7530,
+      "sha256": "62dff05e63155c6bf8135c36a0d79dedbdcaaede9da26fe38daf0bea34323e38"
+    },
+    {
+      "path": "native/vendor/minhook-1.3.4/src/buffer.c",
+      "size": 9814,
+      "sha256": "0ab484d7870c3a8e7a3a1ee61e2070072cf445ed85b619d4c4207fed34356d99"
+    },
+    {
+      "path": "native/vendor/minhook-1.3.4/src/buffer.h",
+      "size": 1820,
+      "sha256": "9769702bd625249e59a19ede05c84365fcc7707e1fa0e5df08df42227cee13e3"
+    },
+    {
+      "path": "native/vendor/minhook-1.3.4/src/hook.c",
+      "size": 26626,
+      "sha256": "edcce4c81985d7dd5b73feae96d6498c8f749b1bca4c3d2d9926ea9a17a84755"
+    },
+    {
+      "path": "native/vendor/minhook-1.3.4/src/trampoline.c",
+      "size": 10718,
+      "sha256": "f13a169f803ff5a8e45c58ce668b4377a9878c0fc4452369b8a1325065186b2b"
+    },
+    {
+      "path": "native/vendor/minhook-1.3.4/src/trampoline.h",
+      "size": 3759,
+      "sha256": "53ed9934492320617a27bfd952ffe7f5b7a4a1d09963d4512447082fe7b727b4"
+    },
+    {
+      "path": "native/vendor/minhook-1.3.4/src/hde/hde32.c",
+      "size": 9318,
+      "sha256": "5da4941e9044f7b325c7f952b5840089e365f374740b7fe7318805d08c0d6c32"
+    },
+    {
+      "path": "native/vendor/minhook-1.3.4/src/hde/hde32.h",
+      "size": 2450,
+      "sha256": "5132de5be8ac7a9d054420f5caef0fb01437faa892f03b3cdc77f795973bf15a"
+    },
+    {
+      "path": "native/vendor/minhook-1.3.4/src/hde/hde64.c",
+      "size": 9507,
+      "sha256": "824eafa315322e6da105a7ce4ec1fc0e0adeee0106d32152fbb0b59e709bd15c"
+    },
+    {
+      "path": "native/vendor/minhook-1.3.4/src/hde/hde64.h",
+      "size": 2602,
+      "sha256": "e99aa4997bda14b534c614c3d8cb78a72c4aca91a1212c8b03ec605d1d75e36e"
+    },
+    {
+      "path": "native/vendor/minhook-1.3.4/src/hde/pstdint.h",
+      "size": 1662,
+      "sha256": "604d1cdf45c5a95bc9cf1bbf39ca05ef83013541101d34971c5cd7577e3d5247"
+    },
+    {
+      "path": "native/vendor/minhook-1.3.4/src/hde/table32.h",
+      "size": 3508,
+      "sha256": "43bf687a9fff071b5f46070db4d36c846f8e069cdc57485ee897c499aacdde23"
+    },
+    {
+      "path": "native/vendor/minhook-1.3.4/src/hde/table64.h",
+      "size": 3577,
+      "sha256": "b774446d2f110ce954fb0a710f4693c5562ddbd8d56fe84106f2ee80db8b50a2"
+    }
+  ]
+}

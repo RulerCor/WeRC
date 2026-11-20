@@ -1,0 +1,5 @@
+export const captureFormats=[['html','HTML / 离线阅读'],['xlsx','Excel / XLSX'],['json','JSON / WeRC结构'],['jsonl','JSONL / WeRC逐行'],['csv','CSV / 表格'],['txt','TXT / 纯文字'],['md','Markdown'],['sql','SQL / SQLite建表脚本'],['chatlab_json','ChatLab JSON'],['chatlab_jsonl','ChatLab JSONL'],['chatlab_zip','ChatLab ZIP / 已保存附件'],['weclone_csv','WeClone CSV']] as const;
+export function captureExtension(format:string):string{return ({chatlab_json:'json',chatlab_jsonl:'jsonl',chatlab_zip:'zip',weclone_csv:'csv'} as Record<string,string>)[format]??format;}
+export const xlsxColumns=[['sequence','序号'],['time','时间'],['conversation','会话'],['sender','发送者'],['local_id','本地ID'],['server_id','服务器ID'],['type','类型'],['text','内容'],['local_status','本地状态'],['nickname','昵称'],['remark','备注'],['group_nickname','群内昵称'],['attachment','附件'],['transcript','转写']] as const;
+
+export const captureMessageKinds=[['text','文字'],['image','图片'],['voice','语音'],['video','视频'],['emoticon','表情'],['file','文件'],['link','链接'],['forward','聊天记录'],['quote','引用'],['transfer','转账'],['red_packet','红包'],['call','通话'],['location','位置'],['contact','名片'],['share','分享'],['system','系统'],['other','其他']] as const;

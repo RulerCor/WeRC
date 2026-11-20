@@ -1,0 +1,7 @@
+{
+  "upstream": "https://github.com/ggml-org/whisper.cpp",
+  "tag": "v1.9.5",
+  "archive_sha256": "7a7a73071939f16bc028ad2f713f16f26e37afb6cc155d0f19e3d65705d2b1d9",
+  "license": "MIT",
+  "path": "whisper.cpp-1.9.5"
+}

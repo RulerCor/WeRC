@@ -1,0 +1,27 @@
+[package]
+name = "werc-wechat-win"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+werc-domain.workspace = true
+werc-application.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+hex.workspace = true
+zeroize.workspace = true
+werc-db-crypto = { path = "../db-crypto" }
+memchr = "2"
+aes = { version = "0.8", features = ["zeroize"] }
+md-5 = "0.10"
+getrandom.workspace = true
+
+reqwest = { version = "=0.13.5", default-features = false, features = ["blocking", "native-tls"] }
+
+[dev-dependencies]
+hmac = "0.12"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Storage_FileSystem", "Win32_System_Registry", "Win32_System_Diagnostics_ToolHelp", "Win32_System_Threading", "Win32_Security_Cryptography", "Win32_System_Memory", "Win32_UI_Shell", "Win32_System_Com", "Win32_System_Diagnostics_Debug", "Win32_Security", "Win32_System_SystemInformation", "Win32_UI_WindowsAndMessaging", "Win32_System_JobObjects"] }

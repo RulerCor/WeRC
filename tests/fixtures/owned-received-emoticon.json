@@ -1,0 +1,17 @@
+{
+  "generator": "owned constant 16x16 YUV420 frames using ffmpeg libx265 lossless; JBIG-KIT 2.2 half-width opaque mask",
+  "width": 16,
+  "height": 16,
+  "frames": 3,
+  "durations_ms": [
+    30,
+    40,
+    50
+  ],
+  "opaque_pixels_per_frame": 128,
+  "transparent_pixels_per_frame": 128,
+  "sha256": "c4fc05505a46fe2a67893d467caba715b189a02a1c43c6f243fdc633795366b5",
+  "size": 7492,
+  "real_wechat_accessed": false,
+  "messages_sent": false
+}

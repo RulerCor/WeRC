@@ -1,0 +1,555 @@
+{
+  "upstream": "https://github.com/strukturag/libde265/releases/tag/v1.1.3",
+  "version": "libde265-1.1.3",
+  "archive_sha256": "2dec9b2d6c788a4d21580aa61d0d53118bf699cb3d7e1aaefb4264b5d1c5f494",
+  "files": [
+    {
+      "path": ".well-known/funding-manifest-urls",
+      "sha256": "e748d8da40e4b35fdae7edc0688dc9c81d44a49aba3ec6901cc6d219b372c19d"
+    },
+    {
+      "path": "AUTHORS",
+      "sha256": "0cc86790616c939cbf1d422790160fde068205b9771e687bd8572afe417a0c8f"
+    },
+    {
+      "path": "ChangeLog",
+      "sha256": "b2b5589bfa97000d310aec1cbd8d548fb851a1e96f1bec36bac3fe01828d801a"
+    },
+    {
+      "path": "cmake/config.h.in",
+      "sha256": "00a1a0c3d4f36c2a8f52fdae7d2b1517203e8df4e4634bc29e3aea587a740e0d"
+    },
+    {
+      "path": "cmake/toolchains/arm-linux-gnueabihf-clang.cmake",
+      "sha256": "248c3c04903206d7c53818d736edc948c746b11174411cc6423620488324afd2"
+    },
+    {
+      "path": "cmake/toolchains/arm-linux-gnueabihf.cmake",
+      "sha256": "8301f51ebd2f96f70ac52b8bbf0bf9ce2a20316629de86e1d5673b3c5c69cd15"
+    },
+    {
+      "path": "cmake/toolchains/mingw-i686.cmake",
+      "sha256": "8713a23c67137d600f4588c0f0099725e0f8295100f1a97b0d34a6f5795f26ee"
+    },
+    {
+      "path": "cmake/toolchains/mingw-x86_64.cmake",
+      "sha256": "2548b37f1c6d432e6ce27488686bd789e5728415b45143b72a1f48729210d7de"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "sha256": "09a1a2116c77676dd328448c6d248dba9090c5951e66b7cb2432e277faba635c"
+    },
+    {
+      "path": "CMakePresets.json",
+      "sha256": "3dc87e9b16c8ec5922fc9ab3b88428a54bdb8bb4bf2d7b05d200f721ea577faf"
+    },
+    {
+      "path": "COPYING",
+      "sha256": "02cc1585a20677992e0ba578fa692635dc193735f2691dc81de924b51c4e8020"
+    },
+    {
+      "path": "dec265/CMakeLists.txt",
+      "sha256": "f68f553525cc9a9f96e30e98b36e32d7b59974ce0e5a6f51942c08298899b35f"
+    },
+    {
+      "path": "dec265/COPYING",
+      "sha256": "687871f725037b40b35ad0b8f5c79263616dfe7b48f72619cec3d84f2d02409a"
+    },
+    {
+      "path": "dec265/dec265.cc",
+      "sha256": "5eaab1cce64af87f5ee9741872e141f986abfd941f69d139a0dd61ca91cc014d"
+    },
+    {
+      "path": "dec265/hdrcopy.cc",
+      "sha256": "bdc7da718a2960e7b8023f22cb41bf9781a79c464403914c07bc0510cdc650aa"
+    },
+    {
+      "path": "dec265/sdl-display.cc",
+      "sha256": "9852396462f9db739e05aaa09cefe52b6669e05c2c92e45caa045554e8cc81e6"
+    },
+    {
+      "path": "dec265/sdl-display.h",
+      "sha256": "56280a30b3d9f1ca3389e97cf7952d40ffe6e99e5ddf1877fa2d919ba87d8150"
+    },
+    {
+      "path": "extra/getopt.c",
+      "sha256": "a938bb3e55a6e832ad0d8d83cd66b78f6839e81e42e0dba5c698ae5a2a9118ca"
+    },
+    {
+      "path": "extra/getopt.h",
+      "sha256": "475ed1f95877a17dcb30e83c41f8dc5c45663af2930aa798f841fd3dbdf6a30f"
+    },
+    {
+      "path": "extra/getopt_long.c",
+      "sha256": "a91b47f24459dbbd2421e76a89a854848e75fbd54de7e24203c4e6e283312b91"
+    },
+    {
+      "path": "extra/libde265/de265-version.h",
+      "sha256": "250eec858a4f5f7cb3fc971b4d61e46e29c602002a3ffbcab93a9dba3d41083a"
+    },
+    {
+      "path": "extra/win32cond.c",
+      "sha256": "902ca556fe53cd33aad123e7b0480e201670637905a8db7693425cc8473c67d2"
+    },
+    {
+      "path": "extra/win32cond.h",
+      "sha256": "158cfba608c8adbe271f7308790d9472eb08e97fe1c58dfe9bab9aef341408f5"
+    },
+    {
+      "path": "fuzzing/CMakeLists.txt",
+      "sha256": "64a0eb23e4efd1221e863ad3ff3c9e18b27a72ae1c3cabe21f2b4bd4c6f94d5d"
+    },
+    {
+      "path": "fuzzing/nal_fuzzer.cc",
+      "sha256": "32be5885506f7287b3ac0d237c3cc0b924db4d7877e1425355d55ef186fe224b"
+    },
+    {
+      "path": "fuzzing/stream_fuzzer.cc",
+      "sha256": "e426f9293e6e11f975f0ae0f569100e3333633003ad6342fae0094cdf4d4cfad"
+    },
+    {
+      "path": "libde265/acceleration.h",
+      "sha256": "30f196ad9dd008448a03163bdc15d979bada5b03f8a768f9bde2ff1de45b35ce"
+    },
+    {
+      "path": "libde265/alloc_pool.cc",
+      "sha256": "f2e77e350184e384775166f2b13698fdf4ab666fddc43a3e385ae92871b7cb70"
+    },
+    {
+      "path": "libde265/alloc_pool.h",
+      "sha256": "89f4ec4df75e5cd5477ca9fe09637379d70ccc68bd9e30da3cc417a264705673"
+    },
+    {
+      "path": "libde265/arm32/arm.cc",
+      "sha256": "617710409d56b2801ebd6aa0e78609f14752c21081e6f3a363c6e6faa2bf1d33"
+    },
+    {
+      "path": "libde265/arm32/arm.h",
+      "sha256": "b271100887b3a7f5fd6eb13f99ec3051f2ae90a8319734764da9825f746f98ae"
+    },
+    {
+      "path": "libde265/arm32/asm.S",
+      "sha256": "40ad97681f98cf3076b2bbeb40ec1bf82ff7e66c02ef9d27804298c6313ee7bb"
+    },
+    {
+      "path": "libde265/arm32/CMakeLists.txt",
+      "sha256": "93d063ddd76482cec3166d19402b6ea38644b470ad5231ef37dc67e5277dfc2b"
+    },
+    {
+      "path": "libde265/arm32/cpudetect.S",
+      "sha256": "1566727cc851dfac5a107f087a28f708489db23f61835acf8b38a35d6a73fc13"
+    },
+    {
+      "path": "libde265/arm32/hevcdsp_qpel_neon.S",
+      "sha256": "96143684ab87935293cd72407b6b85b4450dd84d161b483e4db0f2f4aab132c9"
+    },
+    {
+      "path": "libde265/arm32/neon.S",
+      "sha256": "51f66568fcaa4bc58dec61329b9ee3950564c1ab13def32e09d0ea9fa170a119"
+    },
+    {
+      "path": "libde265/bitstream.cc",
+      "sha256": "ebb930ab1f851d2c18e2f63007a777f5a3c057b6e94db8ebb540dfea750a4135"
+    },
+    {
+      "path": "libde265/bitstream.h",
+      "sha256": "6b52b12aac08dec21d733942891e6fae2d53ee14a89a53300723d4e3b0da3bae"
+    },
+    {
+      "path": "libde265/cabac.cc",
+      "sha256": "951bfa07df599548f9dfc403e0521d91f885b1f883785eb1a8103b0b25b04ab9"
+    },
+    {
+      "path": "libde265/cabac.h",
+      "sha256": "7a86114b151ac121a5b8d0c63598b315b2c2cd11103d57a4f2fa7ab6d71c4960"
+    },
+    {
+      "path": "libde265/CMakeLists.txt",
+      "sha256": "1c67b00e23a3c5b8c53108375e3a7469fbef3030924267b8af0735a4ad41433c"
+    },
+    {
+      "path": "libde265/contextmodel.cc",
+      "sha256": "fefa6156938e3ce6c9db203a409ed88660608607e25e018cd4eb9a2c655fd9ed"
+    },
+    {
+      "path": "libde265/contextmodel.h",
+      "sha256": "b5d3a3ec2a6a4dbfa9fb4b6c3317860eba7ae0c2e0f29b0f57f35acba592e2f3"
+    },
+    {
+      "path": "libde265/COPYING",
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768"
+    },
+    {
+      "path": "libde265/de265-version.h.in",
+      "sha256": "024ba489c5b8448dab9c503afbe9c69b3f5c3bb9a9ae0bb26d7941ab12a8fb43"
+    },
+    {
+      "path": "libde265/de265.cc",
+      "sha256": "bc5dfd0e8b4b1ca2b9a54f1adf3126db57c1bad4d68b8dfda052734a6ce00b65"
+    },
+    {
+      "path": "libde265/de265.h",
+      "sha256": "0f06f06717076a0535c5e967a4fd8fdc9bd3b57d7f5a1d6fc2d0b9a89ef735b7"
+    },
+    {
+      "path": "libde265/deblock.cc",
+      "sha256": "f26ef1ff9c84e826f0d04ba6136e1094bcebfc3f6af08ec599dcfc88f74bbcc5"
+    },
+    {
+      "path": "libde265/deblock.h",
+      "sha256": "b2a133da3130ac0099d1ab3412ebc8e716346738e40a5ad31366647aca5e230c"
+    },
+    {
+      "path": "libde265/decctx.cc",
+      "sha256": "24b420e7834f5a9e834f56a020d778a822563ff814e5951361f41d9e19523962"
+    },
+    {
+      "path": "libde265/decctx.h",
+      "sha256": "74a4c4249037e001d7178df2c14ed73be2741414f1b1797847ef984743a2d76c"
+    },
+    {
+      "path": "libde265/dpb.cc",
+      "sha256": "8e4c5cbffd4434c390100336aaf7bb7a39155770498feb4ba1e3eb0a61271dbf"
+    },
+    {
+      "path": "libde265/dpb.h",
+      "sha256": "2e874deae4a18a57c2ffb4188e3b2158f1d8603887da6e15ea036e0bd768abec"
+    },
+    {
+      "path": "libde265/fallback-dct.cc",
+      "sha256": "5e425a6b543665b9aba8a5fb7c0dad2f4730193760f21426c710d5204463be16"
+    },
+    {
+      "path": "libde265/fallback-dct.h",
+      "sha256": "ba10f70544ca1401face61cd23aee48ccff98c239b23b0a5ac5ced0eeaaf24d4"
+    },
+    {
+      "path": "libde265/fallback-deblk.cc",
+      "sha256": "f82c95b46e6ac7cf5f890e1bf5a3229760d75265455b83dc6257655ecbb8bbf9"
+    },
+    {
+      "path": "libde265/fallback-deblk.h",
+      "sha256": "7d1a89cd307e66370710969e302ae82f4c4a7d30e93ada61a790be21de86003d"
+    },
+    {
+      "path": "libde265/fallback-intrapred.cc",
+      "sha256": "f8f1513c8b8250cef877d634c1e08b67bd4f84b5195041b6d072e5884d8bfa75"
+    },
+    {
+      "path": "libde265/fallback-intrapred.h",
+      "sha256": "0097314d8d7f497a58f58da1a414985ac71ee5cfc765d1271540146cb2c09af0"
+    },
+    {
+      "path": "libde265/fallback-motion.cc",
+      "sha256": "539bae6caaf94520d07d6c6e3e0a8ffb7c6da2e85e29ed49a8013f90b3a7ef71"
+    },
+    {
+      "path": "libde265/fallback-motion.h",
+      "sha256": "1e8583ea7ce0a4bfbf62128e69a03094a669bb758211366a2d4fb602a8250a13"
+    },
+    {
+      "path": "libde265/fallback.cc",
+      "sha256": "ded0c18577d21146ee6af3f98fc15983e0d6d08b84bf4207eb668e801ddad14d"
+    },
+    {
+      "path": "libde265/fallback.h",
+      "sha256": "01a7fa0f346ea9d3438c775bd33b0647e6d42d70ccd2fdc0dc1af1eed854533e"
+    },
+    {
+      "path": "libde265/image-io.cc",
+      "sha256": "a29393700fd8decc78ba0d607842e92e6a1240da9467d2dac2eba323897b9335"
+    },
+    {
+      "path": "libde265/image-io.h",
+      "sha256": "2f56cf34dda5a844e6520865be3c507db3e1e8516c7f6f089032a8a817d4b7e7"
+    },
+    {
+      "path": "libde265/image.cc",
+      "sha256": "8bbc626d862ebc28d033f6c7bdd49c60e030cad7f2c4ad0c0fbc417b3b3ee878"
+    },
+    {
+      "path": "libde265/image.h",
+      "sha256": "dd8a97a3d64c8eb3bd5fc30bb4cf229c0c2193f17390539593305bf9781d1afa"
+    },
+    {
+      "path": "libde265/intrapred.cc",
+      "sha256": "e74f4a22315834e58b01f24cdaf4efaa86d101426d7c15da22bae7d90809be70"
+    },
+    {
+      "path": "libde265/intrapred.h",
+      "sha256": "9bde0fb2ca768b74244e8edafa2928719d623fbd4dccdbb2c42416096fbb718f"
+    },
+    {
+      "path": "libde265/md5.cc",
+      "sha256": "90e3e6c2238c06e640022acda1121efe194e43618a72baa19e97c3fc3a78c180"
+    },
+    {
+      "path": "libde265/md5.h",
+      "sha256": "913e6f5ebfb017ce4f4f282cd37feddcb433b559ea4f67eba91db3463f6b4df0"
+    },
+    {
+      "path": "libde265/motion.cc",
+      "sha256": "c045d1fd1557dc761bd8cbc42e61057012903bb692245156dd17577406532c98"
+    },
+    {
+      "path": "libde265/motion.h",
+      "sha256": "04b74f322a5dc4f6667d6fc3248eb689ce20007301aff2c3325ee1cc2ce6f136"
+    },
+    {
+      "path": "libde265/nal-parser.cc",
+      "sha256": "ebb6eb39daca869239e1fd6cf0ad53e2f3f492f4bc22d703d9f8929e57bc04b5"
+    },
+    {
+      "path": "libde265/nal-parser.h",
+      "sha256": "53f8dbf42daa93df4b959327ca6178654505d39d81dff376345728c27e31326f"
+    },
+    {
+      "path": "libde265/nal.cc",
+      "sha256": "74aaff9bc755674b5c8cba4215e8d32b3e9c0db5a8ec3cd7efb95ec48368be5e"
+    },
+    {
+      "path": "libde265/nal.h",
+      "sha256": "018df24d218d5bdc5a34656b3a90a3fd8e822e7656ded4f061c5c3d0c1d912b7"
+    },
+    {
+      "path": "libde265/pps.cc",
+      "sha256": "a7b912d9fd70bbc437538cec1de74ca098741f0f2161e44013816173009b5fed"
+    },
+    {
+      "path": "libde265/pps.h",
+      "sha256": "2b60649708c6b3ded7284db959dc6c42db655314305d1afe6fc79c5c124353be"
+    },
+    {
+      "path": "libde265/quality.cc",
+      "sha256": "5ea899c65882abe29fff82b64844a55e8ad9122a5fa8a70295503f37e1d66060"
+    },
+    {
+      "path": "libde265/quality.h",
+      "sha256": "9849ca639c5551ec33c04da922eeced00f4ee436acbfee2c57c423359e1f594a"
+    },
+    {
+      "path": "libde265/refpic.cc",
+      "sha256": "714cd8a60951aecefbc96a63139ac06025d9b7332d11a065b5043fd2cf73d3cd"
+    },
+    {
+      "path": "libde265/refpic.h",
+      "sha256": "a6b193d136987c0280e62a6a2dacb2a3d59defac21094d61cc4b248ec13ab079"
+    },
+    {
+      "path": "libde265/sao.cc",
+      "sha256": "9194ea356fb3511548da7fd50338b821be2590def08d377c0cab232be2a2b56a"
+    },
+    {
+      "path": "libde265/sao.h",
+      "sha256": "8439a764500a82a4720b3fe0b7d1ed057116113a73593aff046143aefa14fe9a"
+    },
+    {
+      "path": "libde265/scan.cc",
+      "sha256": "f24aa6e6649ad74623308c4528a49fd9e563d62640800f8a97cfefda8b868910"
+    },
+    {
+      "path": "libde265/scan.h",
+      "sha256": "4a8b685b5b029341ecd296cadedb567aeb3ad01ee20479b3c326468ed6e7e7d8"
+    },
+    {
+      "path": "libde265/sei.cc",
+      "sha256": "f51d41bd1ede112c949b2cd97fd40806966b6012b6062df55d28dc6eafa2506a"
+    },
+    {
+      "path": "libde265/sei.h",
+      "sha256": "b3a8ad8d4d55ba7f837897a5d7ec54292ba5c105dc3f6ec31ef8886f8a642c74"
+    },
+    {
+      "path": "libde265/slice.cc",
+      "sha256": "3a5f7fc61a5ec2b692a9d81130fa8bec17615db3f76a2cf8efbe68874dbf1701"
+    },
+    {
+      "path": "libde265/slice.h",
+      "sha256": "3a6099ea2d07165932473ae8f701c7a6bbaac5e675f0c23851084e8977a9613e"
+    },
+    {
+      "path": "libde265/sps.cc",
+      "sha256": "258656b598933ed8a5900a72fcc1d88a93722c1abd4313edf45682c8e5b616d4"
+    },
+    {
+      "path": "libde265/sps.h",
+      "sha256": "1f045c4f6c6ef183a5e909d6616e0f3eaf709fdde7c2fab29135aafe21c0fd53"
+    },
+    {
+      "path": "libde265/threads.cc",
+      "sha256": "e170a31813a5490755a4324f04893d2828954c2d77b48f51e7a6dc069fe15427"
+    },
+    {
+      "path": "libde265/threads.h",
+      "sha256": "0c89395c87dcd20b3a4c97c42414ba97b41c4792d7b337c9fad2f685026ad4ff"
+    },
+    {
+      "path": "libde265/transform.cc",
+      "sha256": "14fdcab83eb6a59e8695f721f1cc99c5010614072d5e4e08ce0e368f1f8db73d"
+    },
+    {
+      "path": "libde265/transform.h",
+      "sha256": "f29afabaf1b467261a47d279338393598949d7f9c4da95b11293981927721de1"
+    },
+    {
+      "path": "libde265/util.cc",
+      "sha256": "e6f29f7474f115802dfd56ace630c5e161b18e9e0befc61b714fb1d1a8b4b79e"
+    },
+    {
+      "path": "libde265/util.h",
+      "sha256": "281d793ad35b02729b41e890ade30906fdbe8b60c59f4b3e3fb53ccf20216641"
+    },
+    {
+      "path": "libde265/visualize.cc",
+      "sha256": "472f4b868f79c8c2ab732051e6871eb69855f2d6e19568a569338f5c80ea7c7b"
+    },
+    {
+      "path": "libde265/visualize.h",
+      "sha256": "a7e96c8ba0dfc2dcf270be70ad2fda04bdeed2b20aa7c2e3042e3930a7a8e9fe"
+    },
+    {
+      "path": "libde265/vps.cc",
+      "sha256": "bb0965697204996e6fc22a0a4d7b3101c07f5a48ee0b9004d579e399952a3dff"
+    },
+    {
+      "path": "libde265/vps.h",
+      "sha256": "70e872065c4b481f8b6898949fa2182a85d6e62c0ee18ac6d01df17cf41a0774"
+    },
+    {
+      "path": "libde265/vui.cc",
+      "sha256": "c90a5185065d603975975c3a1ae94847dd5803ae159f2f469b5f36a362732dde"
+    },
+    {
+      "path": "libde265/vui.h",
+      "sha256": "fc392b99aee4d03f7d7ad7ba27e2284459c52ac481162e02d9e1977ed3752777"
+    },
+    {
+      "path": "libde265/x86/CMakeLists.txt",
+      "sha256": "696ba658aa2ca643067b8a4d7b15130dffb0eb5bb6b4510102807ae8a1123d68"
+    },
+    {
+      "path": "libde265/x86/sse-dct.cc",
+      "sha256": "bf45ff932c90c3a3063eab88a2c02be5cb8f3335fb7b19ca0520edc7b36e2230"
+    },
+    {
+      "path": "libde265/x86/sse-dct.h",
+      "sha256": "efce1fba8ef62803afe25bf55bf054c1e939d2aa70e62f2cdd242a870429d0a8"
+    },
+    {
+      "path": "libde265/x86/sse-deblk.cc",
+      "sha256": "aad0a38eaeccd439c2c5f1cfdc8dfe85f15e8811fafe68365a0d224bd21d8bc4"
+    },
+    {
+      "path": "libde265/x86/sse-deblk.h",
+      "sha256": "34eef573a51aee01db557c587b809747bf393e5d4e5c6f599c6222ba1f73bc9b"
+    },
+    {
+      "path": "libde265/x86/sse-intrapred.cc",
+      "sha256": "e46e8f159b7cd963afe474827d83488a1f073d4853248baea8008c9e4b225962"
+    },
+    {
+      "path": "libde265/x86/sse-intrapred.h",
+      "sha256": "9990981e78c590e53a69957c26f9d36331a0836de2def30ce0b3341fca51db37"
+    },
+    {
+      "path": "libde265/x86/sse-motion.cc",
+      "sha256": "4feddf97997544abc809916864ffaf26cb362bda5f030d44f7f916d5c9e58427"
+    },
+    {
+      "path": "libde265/x86/sse-motion.h",
+      "sha256": "a46f4de68151fbb901f27f4b60b53b715b3b282041271576981895508c0af529"
+    },
+    {
+      "path": "libde265/x86/sse.cc",
+      "sha256": "751889acfb92dce9c3c5fe3fe4f479dfa7b6499597f15c6ebd25537b82b13e32"
+    },
+    {
+      "path": "libde265/x86/sse.h",
+      "sha256": "6f4d06277443ffab36b527827255e3797efb8f96cca4da01077dfe912af88a6f"
+    },
+    {
+      "path": "libde265/x86/transform-avx2.cc",
+      "sha256": "28de21c679a93357339503836b611d7aabe6c73139ca21aa7f24755d7a0997fa"
+    },
+    {
+      "path": "libde265/x86/transform-avx2.h",
+      "sha256": "9061d120f8c3c60fcf4fe575a08faf2b2d04f6be321d76bd4b34f92f2258a8bc"
+    },
+    {
+      "path": "libde265/x86/transform-avx512.cc",
+      "sha256": "1970911c26b7d124cfc40f9e6856a15d1743972bef214fad2b00d24a18c508de"
+    },
+    {
+      "path": "libde265/x86/transform-avx512.h",
+      "sha256": "9efb9b24b2f13541b6df1af72f26860d2bccda225e945242c5086d794123966b"
+    },
+    {
+      "path": "libde265/x86/transform-dct-tables.h",
+      "sha256": "84e5bda669e67ef8d349cd1f98c7ac405e98da64fc4ee6d971a6cc78f7d68511"
+    },
+    {
+      "path": "libde265.pc.in",
+      "sha256": "371fecae2e4d97fd9ff6fd8abb252770f2bf6f160e3dd058232cd08c4824e535"
+    },
+    {
+      "path": "libde265.png",
+      "sha256": "6329405a6514e2a4020b9ef8682ed59a35a56509be1f6921dbe80a53dd7601cd"
+    },
+    {
+      "path": "NEWS",
+      "sha256": "b2b5589bfa97000d310aec1cbd8d548fb851a1e96f1bec36bac3fe01828d801a"
+    },
+    {
+      "path": "README",
+      "sha256": "1df23de768dd42a6e3ef1d4380c98e29cb6df43349b78034ee554d9dfc39ed57"
+    },
+    {
+      "path": "README.md",
+      "sha256": "3e6abc77dc1eaf6602e0c8b4de07382817000ce5593343aba0411695c17a1a75"
+    },
+    {
+      "path": "SECURITY.md",
+      "sha256": "3d19290559c7dc81f9d9428b469308e67ec5a0b8cd32188ee2f4417014a435b8"
+    },
+    {
+      "path": "sherlock265/CMakeLists.txt",
+      "sha256": "1bc1028db9c19a0d2230b495d2b44cceb133d6741def2e307aa54305f6c891eb"
+    },
+    {
+      "path": "sherlock265/COPYING",
+      "sha256": "687871f725037b40b35ad0b8f5c79263616dfe7b48f72619cec3d84f2d02409a"
+    },
+    {
+      "path": "sherlock265/README",
+      "sha256": "60065b7a5094321cca4b44bead0c24628b3fe1937388bc28abf16e5bfb068ed5"
+    },
+    {
+      "path": "sherlock265/sherlock265.cc",
+      "sha256": "1ced688061102b476349fa6a3385859f3bb8aa0e265af748188fa3150b752207"
+    },
+    {
+      "path": "sherlock265/VideoDecoder.cc",
+      "sha256": "05e0f0dc7bf84856984189b87a5549c9180c84a7a506e9be3b143c32e8f6dd0e"
+    },
+    {
+      "path": "sherlock265/VideoDecoder.h",
+      "sha256": "afef6e85da1e6e30f9d2938da6e9b237346eb8decb85caed0c9f277563ced853"
+    },
+    {
+      "path": "sherlock265/VideoPlayer.cc",
+      "sha256": "e718688fe91a607862361dbb896d808bad29b54c7ff5c23169153b2b451ef745"
+    },
+    {
+      "path": "sherlock265/VideoPlayer.h",
+      "sha256": "9d1e9a79d5d62d2e8ee627670f89d5dab759524f0a230548dcdeb5f53fcd3600"
+    },
+    {
+      "path": "sherlock265/VideoWidget.cc",
+      "sha256": "68e4e7f02e4009f41bcccd0d25a250fe71c634314c98971e469e2665f1d9793c"
+    },
+    {
+      "path": "sherlock265/VideoWidget.h",
+      "sha256": "35b124ef080a6e3d48d5314290523d7337bd54b2b414155ab1ca6c20e2bcb614"
+    }
+  ]
+}

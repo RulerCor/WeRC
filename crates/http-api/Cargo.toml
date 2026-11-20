@@ -1,0 +1,37 @@
+[package]
+name = "werc-http-api"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+werc-domain.workspace = true
+werc-application.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+uuid.workspace = true
+tokio.workspace = true
+axum.workspace = true
+futures-util.workspace = true
+async-stream.workspace = true
+tower.workspace = true
+hex.workspace = true
+zeroize.workspace = true
+reqwest = { version = "=0.13.5", default-features = false, features = ["blocking"] }
+
+[dev-dependencies]
+zip = { version = "=7.4.0", default-features = false }
+png = "=0.18.1"
+quick-xml = "=0.42.0"
+chrono.workspace = true
+aes-gcm.workspace = true
+werc-db-crypto = { path = "../db-crypto" }
+werc-infrastructure.workspace = true
+werc-wechat-win.workspace = true
+http-body-util.workspace = true
+rusqlite.workspace = true
+werc-data-reader = { path = "../data-reader" }
+sha2.workspace = true
+
+[target.'cfg(windows)'.dev-dependencies]
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_System_Memory", "Win32_Security"] }

@@ -1,0 +1,1 @@
+{"identifier":"desktop-main","description":"本机管理窗口的最小核心权限","windows":["main"],"permissions":["core:default"]}

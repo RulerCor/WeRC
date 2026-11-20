@@ -1,0 +1,35 @@
+{
+  "name": "werc-mon3trbot",
+  "version": "1.2.1",
+  "private": true,
+  "type": "module",
+  "description": "Windows 微信能力桌面平台与通用原生 API",
+  "scripts": {
+    "dev": "vite --config apps/desktop/vite.config.ts --host 127.0.0.1",
+    "build": "node node_modules/typescript/bin/tsc --noEmit && node node_modules/vite/bin/vite.js build --config apps/desktop/vite.config.ts",
+    "typecheck": "node node_modules/typescript/bin/tsc --noEmit",
+    "test": "vitest run apps/desktop/src && node --test scripts/rust-tool-path.test.mjs scripts/verify-bundle-component.test.mjs",
+    "tauri": "tauri",
+    "desktop:dev": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/desktop-dev.ps1",
+    "desktop:build": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-from-source.ps1",
+    "icons:generate": "tauri icon assets/app-icon.png --output apps/desktop/src-tauri/icons"
+  },
+  "dependencies": {
+    "@fontsource/ibm-plex-mono": "^5.2.7",
+    "@fontsource/ibm-plex-sans": "^5.2.8",
+    "@tauri-apps/api": "2.12.4",
+    "lucide-react": "^0.577.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "2.12.4",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^6.0.0",
+    "typescript": "^5.9.3",
+    "vite": "8.3.6",
+    "vitest": "^4.0.0"
+  }
+}

@@ -1,0 +1,23 @@
+[package]
+name = "werc-domain"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+chrono.workspace = true
+uuid.workspace = true
+zeroize.workspace = true
+png = "=0.18.1"
+quick-xml = "=0.42.0"
+jpeg-decoder = { version = "=0.3.2", default-features = false }
+mp4parse = { version = "=0.17.0", path = "../../vendor/mp4parse", default-features = false }
+gif = "=0.13.3"
+md-5 = "0.10"
+hex.workspace = true
+html5ever = "=0.39.0"
+url = "=2.5.8"
+image-webp = "=0.2.4"

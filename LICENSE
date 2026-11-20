@@ -1,0 +1,7 @@
+WeRC 非商业源码许可 / WeRC Non-commercial Source License
+
+本许可适用于 WeRC 权利人有权授权的原创部分。允许为非商业目的使用、复制、修改和免费分发源码及构建产物，前提是保留本许可、原有版权声明及第三方许可，并注明修改。超出上述范围的权利由各权利人保留。软件按现状提供，不作任何担保。
+
+This license applies to original WeRC material its rights holders may license. You may use, copy, modify and redistribute that material and resulting builds for non-commercial purposes, without charging for redistribution, if you retain this license, existing copyright notices and third-party terms, and identify modifications. Other rights are reserved. The software is provided as is, without warranty.
+
+No additional rights are granted for third-party artwork. Third-party material remains under its own terms; this license does not restrict rights granted by those terms. The helper-derived parts use the separate license in native/helper/LICENSE. See licenses/THIRD-PARTY-NOTICES.md for component provenance and terms.

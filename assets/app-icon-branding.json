@@ -1,0 +1,30 @@
+{
+  "format": 1,
+  "method": "deterministic_original_portrait_composite",
+  "source": "app-icon-original.jpg",
+  "source_sha256": "eb8de2145bdc0c5f2752bc7e9af40ff91771cb915c8659aa93bc593c5e274f47",
+  "output_sha256": "32415f8b0740126b4fa2507a8d8a92042bf23a45f61acb2e9c009bf50c2e27b6",
+  "dimensions": [
+    1050,
+    1050
+  ],
+  "source_offset": [
+    0,
+    1
+  ],
+  "preserved_rectangle": [
+    20,
+    200,
+    970,
+    920
+  ],
+  "branding": {
+    "text": "WeRC",
+    "palette": [
+      "#161616",
+      "#FFFA00",
+      "#F4F4F2"
+    ],
+    "placement": "upper_left"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "component": "runtime",
+  "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/v2.0.1/sherpa-onnx-v2.0.1-win-x64-static-MT-Release-no-tts.tar.bz2",
+  "sha256": "8e3a59fde5be843058f158cb166222a9722c44ec0ea20589768a459e39a24a9c",
+  "bytes": 241200903
+}

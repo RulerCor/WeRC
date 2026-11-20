@@ -1,0 +1,14 @@
+[package]
+name = "werc-native-worker"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+serde_json.workspace = true
+werc-domain.workspace = true
+werc-data-reader = { path = "../data-reader" }
+zeroize.workspace = true
+
+[build-dependencies]
+static_vcruntime = "=3.0.0"

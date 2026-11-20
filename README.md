@@ -20,4 +20,10 @@ A local WeChat companion for Windows, with a desktop app and bot integration.
 - **4.1.15.9** 可识别适配档案，未开放原生收发。微信设置接口仅支持匹配的 **4.2.0.52** 和原版 **4.1.15.13**。 / WeRC recognizes **4.1.15.9**, but native messaging is disabled. The WeChat settings API is available on matching builds of **4.2.0.52** and the original **4.1.15.13**.
 - 请自行安装并登录微信，再按首次启动引导连接。 / Install WeChat separately, sign in, and follow the first-run setup.
 
-仅供非商业用途。 / For non-commercial use.
+## 源码 / Source
+
+[从源码构建 / Build from source](docs/building.md) · [API 与 MCP / API and MCP](docs/bot-client.md)
+
+源码公开，WeRC 原创部分和 helper 派生部分仅限非商业用途，其他组件保留各自的许可证。 / Source is public. Original WeRC and helper-derived code are non-commercial; other components retain their own licenses.
+
+[WeRC 许可 / WeRC license](LICENSE) · [第三方许可 / Third-party notices](licenses/THIRD-PARTY-NOTICES.md)
