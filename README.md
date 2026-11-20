@@ -16,7 +16,8 @@ A local WeChat companion for Windows, with a desktop app and bot integration.
 ## 兼容性 / Compatibility
 
 - Windows 10 1903+ / Windows 11（x64）。
-- 已验证的微信 x64 构建：**4.1.15.13、4.2.0.52**。其他构建以应用检测结果为准。 / Verified WeChat x64 builds: **4.1.15.13 and 4.2.0.52**. For other builds, check compatibility in the app.
+- 原生收发支持微信 x64 **4.2.0.52（推荐）、4.1.15.13、4.1.13.7** 的匹配构建。WeRC 自动核对核心文件，并显示可用功能。 / Native messaging supports matching WeChat x64 builds of **4.2.0.52 (recommended), 4.1.15.13, and 4.1.13.7**. WeRC checks the core binary and shows which features are available.
+- **4.1.15.9** 可识别适配档案，未开放原生收发。微信设置接口仅支持匹配的 **4.2.0.52** 和原版 **4.1.15.13**。 / WeRC recognizes **4.1.15.9**, but native messaging is disabled. The WeChat settings API is available on matching builds of **4.2.0.52** and the original **4.1.15.13**.
 - 请自行安装并登录微信，再按首次启动引导连接。 / Install WeChat separately, sign in, and follow the first-run setup.
 
 仅供非商业用途。 / For non-commercial use.
