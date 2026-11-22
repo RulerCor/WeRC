@@ -1,12 +1,11 @@
-# WeRC v1.2.3
+# WeRC v1.2.4
 
 适用于 Windows 10 1903 及以上 / Windows 11 x64。首次运行按全屏引导连接微信，可选授权 Bot；应用密码默认关闭。支持消息收发、资料浏览与导出、离线归档、语音转写及 HTTP / MCP 接入。
 
 ## 本版更新
 
-- 修复群图片的成员前缀导致的元数据解析失败；微信 4.2.0.53 已实测三条图片下载与回读。
-- 图片元数据无效或格式不受支持时，API 返回 HTTP 422、`RECEIVED_MEDIA_INVALID` 和 `retryable: false`。
-- 其他能力与兼容范围沿用 v1.2.2；4.2.0.53 群引用接收端跳转尚未确认。
+- 修复「设置 → 诊断 → 导出诊断报告」无法打开保存窗口的问题。系统会提供带时间戳的 JSON 文件名。
+- Fixed diagnostic report export. The Windows save dialog now offers a timestamped JSON filename.
 
 ## 兼容与使用限制
 

@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "WeRC Native API",
-    "version": "1.2.3",
+    "version": "1.2.4",
     "description": "Windows 微信消息与资料接口。HTTP 和 MCP 共用同一核心；发送结果以任务状态为准，历史补读受本机数据限制。"
   },
   "servers": [
