@@ -433,6 +433,7 @@ async fn api_call(
             | "/messages/live/conversation/cancel"
             | "/messages/live/conversation/media/content"
             | "/messages/recovery/media/content"
+            | "/messages/live/export"
             | "/messages/recovery/export"
     );
     let read_post = read_post
@@ -442,6 +443,7 @@ async fn api_call(
                 body.get("action").and_then(|v| v.as_str()),
                 Some(
                     "list"
+                        | "status"
                         | "page"
                         | "records"
                         | "timeline"

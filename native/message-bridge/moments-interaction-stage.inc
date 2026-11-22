@@ -27,7 +27,7 @@ static DWORD interaction_dispatch(WercPacket& p) {
     const auto now=uint64_t(std::time(nullptr));
     const bool probe=p.operation==59;
     const bool reply=!probe && p.dropped==5;
-    if((core_profile_id!=1&&core_profile_id!=5)||std::strcmp(p.target,binding.account)||
+    if((core_profile_id!=1&&(core_profile_id!=5&&core_profile_id!=14))||std::strcmp(p.target,binding.account)||
        !ascii_id(p.attempt,64)||!digest_valid(p.digest)||!p.message_id||
        p.deadline<=now||p.deadline>now+300||(!reply&&(p.sequence||p.present))||
        (probe?p.dropped!=0:(p.dropped<1||p.dropped>5)))return ERROR_INVALID_PARAMETER;

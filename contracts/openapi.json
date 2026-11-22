@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "WeRC_Mon3trBot Native API",
-    "version": "1.2.1",
-    "description": "开发阶段契约。Windows原生微信收发与独立资料工具；已授权Bot默认取得全部可观测消息并直接排队其请求，业务名单/免打扰/自动回复由Bot处理。桌面手动发送及旧草稿令牌保留预览批准。持久幂等、结果回查、SSE续传、HTTP/MCP共用同一核心；原生受理不等于送达，断连历史尚未全部补齐。完整产品仍在开发。"
+    "title": "WeRC Native API",
+    "version": "1.2.2",
+    "description": "Windows 微信消息与资料接口。HTTP 和 MCP 共用同一核心；发送结果以任务状态为准，历史补读受本机数据限制。"
   },
   "servers": [
     {
@@ -4290,7 +4290,7 @@
       "post": {
         "operationId": "manageSourceCaptures",
         "summary": "跨会话补读与保存进度",
-        "description": "所有操作要求messages:read及账号范围；start/step另要求exports:create。页面与检查点加密原子保存。补读仅覆盖已选择本地来源，不清除原生接收缺口、不代表服务器完整历史；导入副本可读不可续读。列表返回data/next_cursor；页面返回rows/revision/next_page。 media_catalog跨页返回data/next，可按类型/保存状态/会话筛选，额外要求media:read。records按分类/时间/会话/内容筛选专项记录，返回data/next/scanned/unreadable，金额及状态仅为消息观察值。media_*写操作要求media:write与exports:create；transcript_step要求media:read与operations:create。所有原权限在输出前重验。",
+        "description": "所有操作要求messages:read及账号范围；start/step另要求exports:create。start 可省略 view_id，使用当前登录已完成首轮后台扫描的全部本地分片；status 查询任务元数据，step 每次推进一页，暂停时停止推进即可。页面与检查点加密原子保存。补读仅覆盖已选择本地来源，不清除原生接收缺口、不代表服务器完整历史；导入副本可读不可续读。列表返回data/next_cursor；页面返回rows/revision/next_page。 media_catalog跨页返回data/next，可按类型/保存状态/会话筛选，额外要求media:read。records按分类/时间/会话/内容筛选专项记录，返回data/next/scanned/unreadable，金额及状态仅为消息观察值。media_*写操作要求media:write与exports:create；transcript_step要求media:read与operations:create。所有原权限在输出前重验。",
         "responses": {
           "200": {
             "description": "本机操作结果",
@@ -4312,7 +4312,7 @@
             "$ref": "#/components/responses/Forbidden"
           },
           "409": {
-            "description": "版本冲突、连接变化或任务被取消"
+            "description": "版本冲突、连接变化或任务被取消、或当前本地分片尚未全部通过认证（RECOVERY_SOURCES_PENDING）"
           },
           "500": {
             "description": "读取、存储或本机组件错误"
@@ -4579,6 +4579,41 @@
           },
           "403": {
             "description": "缺少账号/读取权限"
+          }
+        }
+      }
+    },
+    "/api/v1/messages/recovered/status": {
+      "get": {
+        "operationId": "recoveredMessageStatus",
+        "summary": "查看自动补读进度",
+        "description": "要求 messages:read 及账号授权。仅返回已保存条数、分片进度、水位和错误码，不返回聊天正文。历史范围限于本机所发现的消息来源。",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "自动补读进度",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BackfillStatus"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未认证"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
           }
         }
       }
@@ -9830,7 +9865,11 @@
                 "type": "string"
               },
               "view_id": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "已准备的在线视图。省略或 null 时，使用当前登录账号已完成首轮后台扫描的全部检测分片。"
               },
               "from": {
                 "type": [
@@ -9847,8 +9886,7 @@
             },
             "required": [
               "action",
-              "account_id",
-              "view_id"
+              "account_id"
             ]
           },
           {
@@ -9895,6 +9933,26 @@
             "required": [
               "action",
               "account_id"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "action": {
+                "const": "status"
+              },
+              "account_id": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "action",
+              "account_id",
+              "id"
             ]
           },
           {

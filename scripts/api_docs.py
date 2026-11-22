@@ -69,7 +69,7 @@ b{background:#e7ee9e;padding:4px 8px}pre{white-space:pre-wrap;overflow-wrap:anyw
 <nav><a href="#quickstart">接入与示例</a><a href="#endpoints">HTTP 接口</a><a href="#schemas">数据结构</a><a href="openapi.json">OpenAPI 原始契约</a><a href="bot-client.md">Bot 接入说明</a></nav></header>
 <section class="guide" id="quickstart"><h2>接入与示例</h2>
 <p>在桌面「Bot 接入」启动本机 API，创建令牌并复制实际地址。下方所有接口的请求、响应及限制由随包 OpenAPI 自动生成。端口以桌面显示为准，默认 http://127.0.0.1:5031。没有令牌或令牌撤销后返回 401。</p>
-<p>原生收发支持微信 4.2.0.52（推荐）、4.1.15.13 和 4.1.13.7 的匹配 x64 构建；实际能力以桌面兼容性检测为准。发送以任务状态为准；unknown 不应新建任务重发。独立在线查询可并行，与来源变更冲突时短时排队，后台补读让位；达到并发额度或等待超时仍返回 BUSY（429），只读请求可稍后重试；写请求应保留幂等键并先查原任务。</p>
+<p>原生收发支持微信 4.2.0.53（推荐）、4.2.0.52、4.1.15.13 和 4.1.13.7 的匹配 x64 构建；实际能力以桌面兼容性检测为准。发送以任务状态为准；unknown 不应新建任务重发。独立在线查询可并行，与来源变更冲突时短时排队，后台补读让位；达到并发额度或等待超时仍返回 BUSY（429），只读请求可稍后重试；写请求应保留幂等键并先查原任务。</p>
 <details><summary>展开完整接入说明与请求示例（HTTP / SSE / MCP）</summary><pre>''' + esc(guide.decode('utf-8-sig').replace('\r\n', '\n')) + '''</pre></details></section>
 <h2 id="endpoints">HTTP 接口</h2><div class="search"><label for="filter">搜索路径、方法、字段或说明</label><input id="filter" type="search" placeholder="例如 send-text、account_id、SSE"><small id="count" role="status" aria-live="polite"></small></div>
 ''' + ''.join(entries) + '<h2 id="schemas">数据结构</h2>' + schemas + '''

@@ -9,6 +9,55 @@ use werc_infrastructure::SqliteRepository;
 use werc_wechat_win::WindowsWechatProvider;
 
 struct SyntheticProvider;
+#[cfg(windows)]
+struct UpgradeProvider(std::sync::atomic::AtomicBool);
+#[cfg(windows)]
+impl CapabilityProvider for UpgradeProvider {
+    fn capabilities(&self) -> Vec<Capability> { vec![] }
+    fn inspect(&self, path: &str) -> AppResult<ClientInstallation> {
+        let mut i = SyntheticProvider.inspect(path)?;
+        let upgraded = self.0.load(std::sync::atomic::Ordering::SeqCst);
+        i.sha256 = if upgraded { "2" } else { "1" }.repeat(64);
+        i.version = if upgraded { "4.2.0.53" } else { "4.2.0.52" }.into();
+        i.compatibility = "native_check_required".into();
+        Ok(i)
+    }
+    fn protect_key(&self, context: &str, key: &[u8]) -> AppResult<Vec<u8>> { WindowsWechatProvider.protect_key(context,key) }
+    fn unprotect_key(&self, context: &str, key: &[u8]) -> AppResult<Vec<u8>> { WindowsWechatProvider.unprotect_key(context,key) }
+    fn acquire_database_key(&self, i: &ClientInstallation, pid: u32, db: &str) -> AppResult<werc_domain::connection::AcquiredDatabaseKey> { SyntheticProvider.acquire_database_key(i,pid,db) }
+    fn database_salt(&self, db: &str) -> AppResult<[u8;16]> { SyntheticProvider.database_salt(db) }
+}
+
+#[test]
+#[cfg(windows)]
+fn same_path_upgrade_migrates_all_protected_keys_atomically() {
+    use std::sync::atomic::Ordering;
+    let repo = Arc::new(SqliteRepository::in_memory().unwrap());
+    let provider = Arc::new(UpgradeProvider(std::sync::atomic::AtomicBool::new(false)));
+    let app = Application::new(repo.clone(), provider.clone());
+    let id = app.register_account_local("upgrade fixture").unwrap().id;
+    let old = app.bind_client_local(&id, "fixture.exe").unwrap();
+    app.acquire_database_key_local(&id, 123, "first", true).unwrap();
+    app.acquire_database_key_local(&id, 123, "second", true).unwrap();
+    let old_cipher = repo.protected_key(&id).unwrap().unwrap().0;
+    let stale_revision = repo.key_revision(&id).unwrap();
+    provider.0.store(true, Ordering::SeqCst);
+    let expected = provider.inspect("fixture.exe").unwrap();
+    let mut invalid = expected.clone(); invalid.compatibility = "adapter_pending".into();
+    assert_eq!(app.refresh_upgraded_binding_local(&id,&invalid).unwrap_err().code, "NATIVE_BUILD_UNSUPPORTED");
+    assert_eq!(repo.protected_key(&id).unwrap().unwrap().0,old_cipher);
+    let new = app.refresh_upgraded_binding_local(&id,&expected).unwrap();
+    assert_eq!(new.installation.sha256, "2".repeat(64));
+    assert_eq!(app.key_status_local(&id).unwrap().verified_databases,2);
+    let keys = app.reveal_database_keys_local(&id).unwrap();
+    assert_eq!(keys.len(),2);
+    assert!(keys.iter().all(|k|k.key_hex == "5a".repeat(32)));
+    let new_cipher = repo.protected_key(&id).unwrap().unwrap().0;
+    assert_ne!(old_cipher,new_cipher);
+    assert_eq!(repo.refresh_binding_preserving_key(&old,&new,Some(&old_cipher),Some(&new_cipher),stale_revision).unwrap_err().code,"CONNECTION_CHANGED");
+    assert_eq!(repo.protected_key(&id).unwrap().unwrap().0,new_cipher);
+    assert_eq!(app.bindings_local().unwrap()[0].installation.sha256,new.installation.sha256);
+}
 impl CapabilityProvider for SyntheticProvider {
     fn capabilities(&self) -> Vec<Capability> {
         vec![]

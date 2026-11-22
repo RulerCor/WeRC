@@ -12,14 +12,16 @@ static void check(bool value,const char* name) {
 }
 #include "fixture-article.inc"
 #include "fixture-profile52.inc"
+#include "fixture-profile53.inc"
 int main(int argc,char**) {
     if(argc>1) return 0; // Owned short-lived controller for orphan recovery tests.
     check_articles();
     check_profile52();
+    check_profile53();
     for(const auto& build:core_builds){
         check(core_select_build(build.bytes,build.sha256,build.timestamp,build.image_size),"settings build exact selection");
         check(core_settings_mask==build.settings_mask,"settings feature selected independently");
-        check((build.settings_mask==7)==(build.id==5||(build.sha256[0]==0x10&&build.sha256[1]==0xf8)),"settings research and verified images explicitly selected");
+        check((build.settings_mask==7)==(build.id==5||build.id==14||(build.sha256[0]==0x10&&build.sha256[1]==0xf8)),"settings research and verified images explicitly selected");
     }
     core_profile_id=0;core_settings_mask=0;
     check(native_settings::validate()==ERROR_NOT_SUPPORTED,"unknown settings build refused");

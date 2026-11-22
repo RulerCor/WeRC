@@ -45,7 +45,7 @@ static void* __fastcall text_result_send(void* manager,void* output,SharedMessag
 static DWORD ensure_text_result(){
     const auto task_status=ensure_text_task_result();if(task_status)return task_status;
     if(hook_created)return 0;
-    if(!core_base||(core_profile_id!=1&&core_profile_id!=5&&core_profile_id!=11&&core_profile_id!=12&&core_profile_id!=13))return ERROR_REVISION_MISMATCH;
+    if(!core_base||(core_profile_id!=1&&(core_profile_id!=5&&core_profile_id!=14)&&core_profile_id!=11&&core_profile_id!=12&&core_profile_id!=13))return ERROR_REVISION_MISMATCH;
     void* address=reinterpret_cast<void*>(core_address(core_base,0x178f100));
     auto status=MH_CreateHook(address,reinterpret_cast<void*>(&text_result_send),reinterpret_cast<void**>(&original_send));
     if(status==MH_OK){status=MH_EnableHook(address);if(status!=MH_OK)MH_RemoveHook(address);}

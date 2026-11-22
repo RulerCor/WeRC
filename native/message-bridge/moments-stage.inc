@@ -11,7 +11,7 @@ struct MomentStage {
 static std::unique_ptr<MomentStage> moment_stage;
 static bool moment_input(const WercPacket& p) {
     const auto now=uint64_t(std::time(nullptr));
-    return (core_profile_id==1||core_profile_id==5)&&binding.account[0]&&!std::strcmp(p.target,binding.account)&&
+    return (core_profile_id==1||(core_profile_id==5||core_profile_id==14))&&binding.account[0]&&!std::strcmp(p.target,binding.account)&&
         ascii_id(p.attempt,64)&&digest_valid(p.digest)&&p.deadline>now&&p.deadline<=now+300&&
         (p.dropped==1||p.dropped==2)&&p.message_id<=10000;
 }

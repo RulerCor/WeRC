@@ -76,6 +76,41 @@ impl Application {
         self.repository.save_binding(&binding)?;
         Ok(binding)
     }
+    /// Refresh an upgraded executable at the same path without discarding the keyring.
+    pub fn refresh_upgraded_binding_local(&self, account: &str, expected: &ClientInstallation) -> AppResult<ClientBinding> {
+        self.ensure_account(account)?;
+        self.ensure_current_connection(account)?;
+        let old = self.repository.bindings()?.into_iter().find(|b| b.account_id == account)
+            .ok_or_else(|| AppError::new("CONNECTION_REQUIRED", "请先绑定客户端"))?;
+        if old.installation.id != expected.id || !old.installation.executable_path.eq_ignore_ascii_case(&expected.executable_path) {
+            return Err(AppError::new("CONNECTION_CHANGED", "客户端路径已变化，请手工核对"));
+        }
+        if old.installation.sha256 == expected.sha256 { return Ok(old); }
+        if !matches!(expected.compatibility.as_str(), "supported" | "native_check_required") {
+            return Err(AppError::new("NATIVE_BUILD_UNSUPPORTED", "更新后的微信版本尚未适配"));
+        }
+        let current = self.provider.inspect(&expected.executable_path)?;
+        if current.id != expected.id || current.sha256 != expected.sha256 || current.version != expected.version || !matches!(current.compatibility.as_str(), "supported" | "native_check_required") {
+            return Err(AppError::new("CLIENT_CHANGED", "微信程序在检查期间发生变化"));
+        }
+        let revision = self.repository.key_revision(account)?;
+        let saved = self.repository.protected_key(account)?;
+        let new_key = saved.as_ref().map(|(old_key, _)| -> AppResult<Vec<u8>> {
+            let old_context = format!("WeRC/key/v1/{account}/{}", old.installation.sha256);
+            let new_context = format!("WeRC/key/v1/{account}/{}", current.sha256);
+            let clear = Zeroizing::new(self.provider.unprotect_key(&old_context, old_key)?);
+            let protected = self.provider.protect_key(&new_context, &clear)?;
+            let verified = Zeroizing::new(self.provider.unprotect_key(&new_context, &protected)?);
+            if verified.as_slice() != clear.as_slice() {
+                return Err(AppError::new("KEY_PROTECTION_FAILED", "密钥迁移校验失败"));
+            }
+            Ok(protected)
+        }).transpose()?;
+        let now = Utc::now().to_rfc3339();
+        let new = ClientBinding { account_id: account.into(), installation: current, bound_at: now.clone(), checked_at: now, validation: "metadata_only".into() };
+        self.repository.refresh_binding_preserving_key(&old, &new, saved.as_ref().map(|(v, _)| v.as_slice()), new_key.as_deref(), revision)?;
+        Ok(new)
+    }
     pub fn unbind_client_local(&self, account: &str) -> AppResult<()> {
         self.ensure_account(account)?;
         self.repository.remove_binding(account)

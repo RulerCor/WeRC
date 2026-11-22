@@ -98,7 +98,7 @@ static void inspect_text_task(TextTaskCapture* capture){
 }
 static DWORD ensure_text_task_result(){
     if(text_task_hook)return 0;
-    if(!core_base||(core_profile_id!=1&&core_profile_id!=5&&core_profile_id!=11&&core_profile_id!=12&&core_profile_id!=13))return ERROR_REVISION_MISMATCH;
+    if(!core_base||(core_profile_id!=1&&(core_profile_id!=5&&core_profile_id!=14)&&core_profile_id!=11&&core_profile_id!=12&&core_profile_id!=13))return ERROR_REVISION_MISMATCH;
     if(text_task_tls==TLS_OUT_OF_INDEXES){text_task_tls=TlsAlloc();if(text_task_tls==TLS_OUT_OF_INDEXES)return ERROR_NOT_ENOUGH_MEMORY;}
     auto address=reinterpret_cast<void*>(core_address(core_base,0x3981a30));
     auto status=MH_CreateHook(address,reinterpret_cast<void*>(&text_task_construct),reinterpret_cast<void**>(&original_text_task_construct));

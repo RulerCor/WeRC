@@ -12,7 +12,7 @@ constexpr char HISTORY_URL[]="/cgi-bin/mmbiz-bin/bizattr/bizprofilev2h5";
 static uintptr_t host=0;
 static uintptr_t host_address(uintptr_t legacy){
     if(core_profile_id==1)return host+legacy;
-    if(core_profile_id!=5)return 0;
+    if((core_profile_id!=5&&core_profile_id!=14))return 0;
     switch(legacy){
         case 0x5ccf18:return host+0x5d3720;
         case 0x4e02d0:return host+0x4e71e0;

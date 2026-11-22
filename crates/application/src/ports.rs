@@ -307,6 +307,9 @@ pub trait Repository: Send + Sync {
     fn events(&self, after: i64, account: &str, limit: u32) -> AppResult<Vec<Event>>;
     fn bindings(&self) -> AppResult<Vec<ClientBinding>>;
     fn save_binding(&self, binding: &ClientBinding) -> AppResult<()>;
+    fn refresh_binding_preserving_key(&self, _old: &ClientBinding, _new: &ClientBinding, _old_key: Option<&[u8]>, _new_key: Option<&[u8]>, _revision: i64) -> AppResult<()> {
+        Err(AppError::new("CONNECTION_CHANGED", "当前存储不支持保留密钥更新绑定"))
+    }
     fn remove_binding(&self, account: &str) -> AppResult<()>;
     fn store_key(&self, binding: &ClientBinding, protected: &[u8]) -> AppResult<()>;
     fn key_revision(&self, account: &str) -> AppResult<i64>;

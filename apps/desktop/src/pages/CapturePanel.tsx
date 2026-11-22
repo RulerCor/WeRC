@@ -1,6 +1,7 @@
 import {useEffect,useRef,useState} from 'react';
 import {command,desktopAvailable} from '../lib/desktop';
 import {HelpTip} from '../components/HelpTip';
+import {waitForOnlineRead} from '../lib/busy-read';
 import type {LiveMessage} from './LiveChat';
 import {CaptureTranscripts} from './CaptureTranscripts';
 import {CaptureMedia} from './CaptureMedia';
@@ -22,17 +23,18 @@ export function CapturePanel({accountId,viewId,initiallyOpen=false}:{accountId:s
   useEffect(()=>{setItems([]);setPage(null);setFocusRow(null);setActive(null);setNext(null);setBusy(false);setError('');return()=>{generation.current++;running.current=false;const pending=request.current;request.current=null;if(pending)void command('cancel_browse',{requestId:pending}).catch(()=>{});};},[accountId]);
   async function list(before:number|null=null){const g=generation.current;setBusy(true);setError('');try{const p=await command<{data:CaptureStatus[];next_cursor:number|null}>('capture_list',{accountId,before});if(g!==generation.current)return;setItems(old=>before?[...old,...p.data]:p.data);setNext(p.next_cursor);}catch(e){if(g===generation.current)setError(String(e));}finally{if(g===generation.current)setBusy(false);}}
   async function run(existing?:CaptureStatus){const g=generation.current;running.current=true;setBusy(true);setError('');setPage(null);try{
-    let current=existing??await command<CaptureStatus>('capture_start',{accountId,viewId,from:from?Math.floor(new Date(from).getTime()/1000):null,until:until?Math.floor(new Date(until).getTime()/1000):null});
-    if(g!==generation.current)return;setActive(current);
-    while(running.current&&!current.complete_selected_sources&&g===generation.current){const requestId=crypto.randomUUID();request.current=requestId;current=await command<CaptureStatus>('capture_step',{accountId,id:current.id,requestId});if(g!==generation.current)return;request.current=null;setActive(current);}
+    const canceled=()=>!running.current||g!==generation.current;
+    let current=existing??await waitForOnlineRead(()=>command<CaptureStatus>('capture_start',{accountId,viewId:viewId??null,from:from?Math.floor(new Date(from).getTime()/1000):null,until:until?Math.floor(new Date(until).getTime()/1000):null}),canceled);
+    if(!current||g!==generation.current)return;setActive(current);
+    while(running.current&&!current.complete_selected_sources&&g===generation.current){const requestId=crypto.randomUUID();request.current=requestId;const id:string=current.id;const next=await waitForOnlineRead(()=>command<CaptureStatus>('capture_step',{accountId,id,requestId}),canceled);if(g!==generation.current)return;request.current=null;if(!next)break;current=next;setActive(current);}
     if(g===generation.current)setItems(old=>[current,...old.filter(i=>i.id!==current.id)]);
-  }catch(e){if(g===generation.current)setError(String(e));}finally{if(g===generation.current){running.current=false;request.current=null;setBusy(false);}}}
+  }catch(e){if(g===generation.current&&running.current)setError(String(e));}finally{if(g===generation.current){running.current=false;request.current=null;setBusy(false);}}}
   function stop(){running.current=false;if(request.current)void command('cancel_browse',{requestId:request.current}).catch(e=>setError(String(e)));}
   async function read(item:CaptureStatus,n:number,locatedRow:number|null=null){const g=generation.current;setBusy(true);setError('');try{const p=await command<CapturePage>('capture_page',{accountId,id:item.id,index:n});if(g===generation.current){setActive(item);setPage(p);setIndex(n);setFocusRow(locatedRow);}}catch(e){if(g===generation.current)setError(String(e));}finally{if(g===generation.current)setBusy(false);}}
   async function added(){if(!active)return;const g=generation.current;try{const status=await command<CaptureStatus>('capture_status',{accountId,id:active.id});if(g!==generation.current)return;setActive(status);setItems(old=>old.map(i=>i.id===status.id?status:i));await read(status,status.pages-1);}catch(e){if(g===generation.current)setError(String(e));}}
   return <details ref={panel} className="recovery-panel local-tools" open={opened} onToggle={e=>setOpened(e.currentTarget.open)}><summary>全会话补读与归档</summary>
     <div className="actions"><button className="button" disabled={busy||!desktopAvailable} onClick={()=>void list()}>查看补读任务</button><HelpTip label="全会话补读说明">读取所选消息分片的所有会话，每页和进度一起加密保存。暂停、关闭软件或重新连接同一账号后可继续。开始时固定结束时间；本地已删除、尚未下载或从未同步的内容无法由本地来源补出。此处的保存页不会清除原生接收缺口，也不充当发送回执。</HelpTip></div>
-    {viewId&&<details><summary>新建补读</summary><div className="history-query"><label>开始时间<input type="datetime-local" value={from} disabled={busy} onChange={e=>setFrom(e.target.value)}/></label><label>结束时间<input type="datetime-local" value={until} disabled={busy} onChange={e=>setUntil(e.target.value)}/></label><button className="button primary" disabled={busy||!desktopAvailable} onClick={()=>void run()}>读取全部会话并保存</button></div></details>}
+    <details><summary>新建补读</summary><div className="history-query"><label>开始时间<input type="datetime-local" value={from} disabled={busy} onChange={e=>setFrom(e.target.value)}/></label><label>结束时间<input type="datetime-local" value={until} disabled={busy} onChange={e=>setUntil(e.target.value)}/></label><button className="button primary" disabled={busy||!desktopAvailable} onClick={()=>void run()}>读取全部会话并保存</button></div></details>
     {running.current&&<button className="button" onClick={stop}>暂停并保留进度</button>}
     {active&&<p role="status">已保存 {active.rows} 条 / {active.pages} 页 · {active.complete_selected_sources?'所选来源扫描完成':`已扫描 ${active.source_index}/${active.source_count} 个分片`}</p>}
     {error&&<p role="alert" className="error-notice">{error}</p>}

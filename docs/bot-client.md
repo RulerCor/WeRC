@@ -62,6 +62,12 @@ members为1至8个不同的精确账号，不接受昵称或@所有人。客户�
 
 短轮询可使用 `/api/v1/messages/native?account_id=...&after=0`，用返回的 next_cursor 继续。平台事件流的 event_id 与消息流的 position **是两个不同游标**，分别保存。不能用原生 sequence 代替跨重连位置。
 
+## 历史补读与导出
+
+- 看自动补读进度：`GET /api/v1/messages/recovered/status?account_id=账号ID`。按位置取已保存记录用 `GET /api/v1/messages/recovered`，持续订阅用 `/api/v1/messages/recovered/stream`。补读仅覆盖本机微信已保存的数据，重叠结果按 `id` 和 `content_digest` 合并。
+- 建立可导出归档：向 `POST /api/v1/messages/recovery` 发送 `{"action":"start","account_id":"账号ID"}`，可加 Unix 秒级 `from`、`until`。省略 `view_id` 时使用当前登录已完成首轮后台扫描的本地分片；若返回 `RECOVERY_SOURCES_PENDING`，看自动补读状态再试。保留返回的 `id`，用 `action: status` 查看进度，用 `action: step` 携带 `id` 和唯一 `request_id` 逐页推进，直到 `complete_selected_sources` 为真。暂停时停止发 `step`，续跑使用原 `id`。若建任务后响应丢失，先用 `list` 查找之前建立的任务。
+- 导出：`POST /api/v1/messages/recovery/export`，传 `account_id`、归档 `id`、`format` 和 `request_id`，按需传 `options`；HTTP 返回文件。已有归档可以在微信断开时导出。MCP 用 `api_read` 查状态、列表、读取和导出，用 `api_call` 建立和推进归档；持续流直接走 HTTP。建归档、推进及导出额外要求 `exports:create`，其余权限按 OpenAPI 中对应操作说明。
+
 ## MCP
 
 Streamable HTTP入口 `/mcp`，只读入口 `/mcp/read`。支持协议2025-06-18；初始化、ping、tools/list、tools/call；无会话状态，不需要额外session配置。POST返回JSON，通知返回202；GET不提供MCP SSE（原生消息使用上面的专用流）。能力范围按令牌过滤，只读入口拒绝写工具。

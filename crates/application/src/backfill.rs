@@ -249,6 +249,23 @@ impl Application {
         account: &str,
         login: &str,
     ) -> AppResult<Vec<BoundSource>> {
+        self.recovery_source_bindings(account, login, false)
+    }
+
+    pub(crate) fn initially_scanned_message_sources(
+        &self,
+        account: &str,
+        login: &str,
+    ) -> AppResult<Vec<BoundSource>> {
+        self.recovery_source_bindings(account, login, true)
+    }
+
+    fn recovery_source_bindings(
+        &self,
+        account: &str,
+        login: &str,
+        only_scanned: bool,
+    ) -> AppResult<Vec<BoundSource>> {
         let Some((_, state)) = self.backfill_state(account)? else {
             return Ok(vec![]);
         };
@@ -258,6 +275,7 @@ impl Application {
         Ok(state
             .sources
             .into_iter()
+            .filter(|source| !only_scanned || source.completed_until.is_some())
             .map(|source| BoundSource {
                 database: source.database,
                 salt: source.salt,

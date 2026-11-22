@@ -114,6 +114,7 @@ impl IntoResponse for ApiError {
             | "FORWARD_FILE_CACHE_UNAVAILABLE"
             | "MESSAGE_NOT_FOUND" => StatusCode::NOT_FOUND,
             "BUSY" | "RECEIVED_MEDIA_BUSY" | "NATIVE_TARGET_LIMIT" => StatusCode::TOO_MANY_REQUESTS,
+            "RECOVERY_SOURCES_PENDING" => StatusCode::CONFLICT,
             _ => StatusCode::INTERNAL_SERVER_ERROR,
         };
         (
@@ -243,6 +244,7 @@ fn api_routes(state: ApiState) -> Router<ApiState> {
         .route("/messages/live/calendar/cancel", post(conversation::cancel))
         .route("/messages/live/search", post(live_search::page))
         .route("/messages/recovered", get(backfill::page))
+        .route("/messages/recovered/status", get(backfill::status))
         .route("/messages/recovered/stream", get(backfill::stream))
         .route("/messages/recovery", post(library::capture))
         .route("/messages/recovery/export", post(library::capture_export))

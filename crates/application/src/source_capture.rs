@@ -152,6 +152,26 @@ impl Application {
         from: Option<i64>,
         until: Option<i64>,
     ) -> AppResult<CaptureStatus> {
+        self.start_capture(account, Some(view_id), from, until)
+    }
+
+    /// Archive all currently detected sources already verified by the recovery worker.
+    pub fn start_enrolled_capture_local(
+        &self,
+        account: &str,
+        from: Option<i64>,
+        until: Option<i64>,
+    ) -> AppResult<CaptureStatus> {
+        self.start_capture(account, None, from, until)
+    }
+
+    fn start_capture(
+        &self,
+        account: &str,
+        view_id: Option<&str>,
+        from: Option<i64>,
+        until: Option<i64>,
+    ) -> AppResult<CaptureStatus> {
         let _guard = self
             .history_guard
             .try_lock()
@@ -164,20 +184,42 @@ impl Application {
         }
         let (context, revision) = self.checked_send_context(account, "filehelper")?;
         let key_revision = self.repository.key_revision(account)?;
-        let sources = self.with_search_parent(account, view_id, |_, _, sources, _| {
-            Ok(sources
-                .iter()
-                .map(|s| Source {
-                    database: s.database.to_string(),
-                    salt: s.salt,
-                    fingerprint: s.fingerprint.clone(),
-                })
-                .collect())
-        })?;
+        let sources = if let Some(view_id) = view_id {
+            self.with_search_parent(account, view_id, |_, _, sources, _| {
+                Ok(sources
+                    .iter()
+                    .map(|s| Source {
+                        database: s.database.to_string(),
+                        salt: s.salt,
+                        fingerprint: s.fingerprint.clone(),
+                    })
+                    .collect())
+            })?
+        } else {
+            let detected = self.selected_automatic_sources_local(account)?;
+            if detected.databases.is_empty() {
+                return Err(AppError::new("SOURCE_NOT_FOUND", "当前登录账号没有可归档的消息来源"));
+            }
+            let enrolled = self.initially_scanned_message_sources(account, &context.sender_id)?;
+            let mut sources = Vec::with_capacity(detected.databases.len());
+            for database in detected.databases {
+                let salt = self.provider.database_salt(&database)?;
+                let fingerprint = self.provider.live_source_fingerprint(&database)?;
+                if !enrolled.iter().any(|source| source.database == database
+                    && source.salt == salt && source.fingerprint == fingerprint) {
+                    return Err(AppError::new("RECOVERY_SOURCES_PENDING", "当前消息来源尚未全部通过后台认证；请查看自动补读状态后重试"));
+                }
+                sources.push(Source { database, salt, fingerprint });
+            }
+            sources
+        };
+        if self.checked_send_context(account, "filehelper")? != (context.clone(), revision) {
+            return Err(AppError::new("CONNECTION_CHANGED", "准备归档期间微信登录已变化"));
+        }
         let capture = Capture {
             names:Default::default(),
             imported: false,
-            login: context.sender_id.clone(),
+            login: context.sender_id,
             started_at: chrono::Utc::now().to_rfc3339(),
             query,
             sources,

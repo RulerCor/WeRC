@@ -1,7 +1,7 @@
 // ABI23: one MP4 and one separately staged PNG cover per video moment.
 static DWORD moment_video_stage_dispatch(WercPacket& p) {
     const auto now=uint64_t(std::time(nullptr));
-    if((core_profile_id!=1&&core_profile_id!=5) || !binding.account[0] || std::strcmp(p.target,binding.account) ||
+    if((core_profile_id!=1&&(core_profile_id!=5&&core_profile_id!=14)) || !binding.account[0] || std::strcmp(p.target,binding.account) ||
        !ascii_id(p.attempt,64) || !digest_valid(p.digest) || p.deadline<=now || p.deadline>now+300)
         return ERROR_INVALID_PARAMETER;
     if(!moment_stage || !mention_binding_matches(moment_stage->packet,p) ||

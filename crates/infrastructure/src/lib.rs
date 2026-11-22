@@ -675,6 +675,9 @@ impl Repository for SqliteRepository {
     fn save_binding(&self, binding: &werc_domain::connection::ClientBinding) -> AppResult<()> {
         self.save_binding_store(binding)
     }
+    fn refresh_binding_preserving_key(&self, old: &werc_domain::connection::ClientBinding, new: &werc_domain::connection::ClientBinding, old_key: Option<&[u8]>, new_key: Option<&[u8]>, revision: i64) -> AppResult<()> {
+        self.refresh_binding_preserving_key_store(old, new, old_key, new_key, revision)
+    }
     fn remove_binding(&self, account: &str) -> AppResult<()> {
         self.remove_binding_store(account)
     }

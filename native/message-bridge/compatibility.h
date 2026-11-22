@@ -4,8 +4,9 @@
 #include <string>
 
 // These are two variants of the same native layout, not arbitrary patches.
-enum class CoreVariant { Unsupported, Original, AntiRecall, WeChat42052, WeChat42013, WeChat4209, WeChat42012, WeChat411550, WeChat411553, WeChat41137, WeChat411310, WeChat41159 };
+enum class CoreVariant { WeChat42053, Unsupported, Original, AntiRecall, WeChat42052, WeChat42013, WeChat4209, WeChat42012, WeChat411550, WeChat411553, WeChat41137, WeChat411310, WeChat41159 };
 inline CoreVariant core_variant(const char* sha256) {
+    if (!std::strcmp(sha256,"ac6b174d98ee1b69e95c99a7a39c3197c8c167b7c6d32f5b72c7a7659c104825")) return CoreVariant::WeChat42053;
     if (!std::strcmp(sha256,"d733489eea0b62af77e1aa61ba645cd941583d2a64fb2d7572da818d285f8d84")) return CoreVariant::WeChat42052;
     if (!std::strcmp(sha256,"afe3d02c58bada3c35009c0cd58ee1f57b2a00fe53237d0dce649107fddb9a20")) return CoreVariant::WeChat42013;
     if (!std::strcmp(sha256,"a81c4770350a4edf3e774413da832a785d7aac50025471b30ea26d1f846b9fb4")) return CoreVariant::WeChat4209;

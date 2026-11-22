@@ -16,9 +16,10 @@ A local WeChat companion for Windows, with a desktop app and bot integration.
 ## 兼容性 / Compatibility
 
 - Windows 10 1903+ / Windows 11（x64）。
-- 原生收发支持微信 x64 **4.2.0.52（推荐）、4.1.15.13、4.1.13.7** 的匹配构建。WeRC 自动核对核心文件，并显示可用功能。 / Native messaging supports matching WeChat x64 builds of **4.2.0.52 (recommended), 4.1.15.13, and 4.1.13.7**. WeRC checks the core binary and shows which features are available.
-- **4.1.15.9** 可识别适配档案，未开放原生收发。微信设置接口仅支持匹配的 **4.2.0.52** 和原版 **4.1.15.13**。 / WeRC recognizes **4.1.15.9**, but native messaging is disabled. The WeChat settings API is available on matching builds of **4.2.0.52** and the original **4.1.15.13**.
+- 原生收发支持微信 x64 **4.2.0.53（推荐）、4.2.0.52、4.1.15.13、4.1.13.7** 的匹配构建。WeRC 自动核对核心文件，并显示可用功能。 / Native messaging supports matching WeChat x64 builds of **4.2.0.53 (recommended), 4.2.0.52, 4.1.15.13, and 4.1.13.7**. WeRC checks the core binary and shows available features.
+- **4.1.15.9** 可识别适配档案，未开放原生收发。微信设置接口支持匹配的 **4.2.0.53、4.2.0.52** 和原版 **4.1.15.13**。 / WeRC recognizes **4.1.15.9**, but native messaging is disabled. The settings API supports matching **4.2.0.53, 4.2.0.52**, and original **4.1.15.13** builds.
 - 请自行安装并登录微信，再按首次启动引导连接。 / Install WeChat separately, sign in, and follow the first-run setup.
+- 历史读取取决于本机保存的数据，无法保证完整。4.2.0.53 群引用的接收端跳转尚未确认。 / History depends on locally available data and may be incomplete. Recipient-side group quote navigation on 4.2.0.53 remains unverified.
 
 ## 源码 / Source
 

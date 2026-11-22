@@ -281,7 +281,7 @@ pub(crate) enum CaptureAction {
     },
     Start {
         account_id: String,
-        view_id: String,
+        view_id: Option<String>,
         from: Option<i64>,
         until: Option<i64>,
     },
@@ -293,6 +293,10 @@ pub(crate) enum CaptureAction {
     List {
         account_id: String,
         before: Option<i64>,
+    },
+    Status {
+        account_id: String,
+        id: String,
     },
     Page {
         account_id: String,
@@ -332,6 +336,7 @@ impl CaptureAction {
             | Self::Start { account_id, .. }
             | Self::Step { account_id, .. }
             | Self::List { account_id, .. }
+            | Self::Status { account_id, .. }
             | Self::Page { account_id, .. } => account_id,
         }
     }
@@ -482,12 +487,10 @@ pub(crate) fn capture_call(
             until,
         } => {
             p.require("exports:create")?;
-            serde_json::to_value(app.start_source_capture_local(
-                &account_id,
-                &view_id,
-                from,
-                until,
-            )?)
+            serde_json::to_value(match view_id {
+                Some(view) => app.start_source_capture_local(&account_id, &view, from, until)?,
+                None => app.start_enrolled_capture_local(&account_id, from, until)?,
+            })
         }
         CaptureAction::Step {
             account_id,
@@ -498,6 +501,9 @@ pub(crate) fn capture_call(
             let request =
                 conversation::request_key(p, &account_id, &request_id).map_err(|e| e.0)?;
             serde_json::to_value(app.step_source_capture_local(&account_id, &id, &request)?)
+        }
+        CaptureAction::Status { account_id, id } => {
+            serde_json::to_value(app.source_capture_status_local(&account_id, &id)?)
         }
         CaptureAction::List { account_id, before } => {
             serde_json::to_value(app.source_captures_local(&account_id, before)?)

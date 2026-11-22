@@ -225,13 +225,17 @@ pub(super) async fn native_processes(
             .into_iter()
             .find(|b| b.account_id == account_id)
             .ok_or_else(|| AppError::new("CONNECTION_REQUIRED", "请先绑定客户端"))?;
-        let candidates = app
+        let current = app
             .discover_clients_local()?
             .installations
             .into_iter()
-            .find(|i| i.id == binding.installation.id && i.sha256 == binding.installation.sha256)
-            .map(|i| i.process_ids)
-            .unwrap_or_default();
+            .find(|i| i.id == binding.installation.id);
+        let candidates = if let Some(installation) = current {
+            if installation.sha256 != binding.installation.sha256 && !installation.process_ids.is_empty() {
+                app.refresh_upgraded_binding_local(&account_id, &installation)?;
+            }
+            installation.process_ids
+        } else { Vec::new() };
         let main = werc_wechat_win::setup::main_window_processes(&candidates);
         Ok(if main.is_empty() { candidates } else { main })
     })

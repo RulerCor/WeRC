@@ -318,7 +318,7 @@ static bool set_native_string(SmallString* string, const char* text) {
 static bool set_native_body(SmallString* string,const char* text) {
     const auto length=strnlen_s(text,10001);
     if(length<=1023)return set_native_string(string,text);
-    if(length>10000||(core_profile_id!=1&&core_profile_id!=5&&core_profile_id!=11&&core_profile_id!=12&&core_profile_id!=13)||string->length||string->capacity!=15)return false;
+    if(length>10000||(core_profile_id!=1&&(core_profile_id!=5&&core_profile_id!=14)&&core_profile_id!=11&&core_profile_id!=12&&core_profile_id!=13)||string->length||string->capacity!=15)return false;
     using Construct=SmallString*(__fastcall*)(SmallString*,const char*);
     reinterpret_cast<Construct>(core_address(core_base,0x88ad0))(string,text);
     const auto bytes=string->capacity<=15?string->data:*reinterpret_cast<const char*const*>(string->data);

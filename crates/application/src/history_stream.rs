@@ -126,10 +126,15 @@ impl Application {
         confirmed: bool,
         setup: bool,
     ) -> AppResult<HistorySource> {
-        let _guard = self
-            .history_guard
-            .try_lock()
-            .map_err(|_| AppError::new("BUSY", "已有来源正在导入，请等待其完成"))?;
+        let _guard = if setup {
+            // Automatic setup yields to interactive source operations.
+            self.history_guard
+                .try_lock()
+                .map_err(|_| AppError::new("BUSY", "已有来源正在导入，请等待其完成"))?
+        } else {
+            // A user-requested import joins the same fair queue as other foreground reads.
+            self.history_guard.exclusive(|| Ok(()))?
+        };
         self.ensure_account(account)?;
         if !confirmed {
             return Err(AppError::new(

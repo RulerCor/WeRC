@@ -1,6 +1,6 @@
 // Adapted from native/helper under its noncommercial LICENSE. Profile 1 only.
 static uintptr_t interaction_address(uintptr_t base, uintptr_t rva) {
- if (!base || (core_profile_id!=1&&core_profile_id!=5)) return 0;
+ if (!base || (core_profile_id!=1&&(core_profile_id!=5&&core_profile_id!=14))) return 0;
  switch(rva){
  case 0x5737070:return core_address(core_base,0x5639460);
  case 0x8f52418:return core_address(core_base,0x8d81418);
@@ -409,7 +409,7 @@ static DWORD start_impl(void* parameter) {
     if (!copy_config(parameter, &cfg)) return ERROR_INVALID_PARAMETER;
     if (!validate(&cfg)) return ERROR_INVALID_PARAMETER;
     const auto core = GetModuleHandleW(L"Weixin.dll");
-    if (!core || !core_fingerprint(core) || (core_profile_id!=1 && core_profile_id!=5))
+    if (!core || !core_fingerprint(core) || (core_profile_id!=1 && (core_profile_id!=5&&core_profile_id!=14)))
         return ERROR_NOT_SUPPORTED;
     core_base = reinterpret_cast<uintptr_t>(core);
     if (!wxbot_moments_candidate::anchors_match() || !anchors_match()) return ERROR_REVISION_MISMATCH;

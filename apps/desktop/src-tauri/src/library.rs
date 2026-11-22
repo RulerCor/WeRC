@@ -336,7 +336,7 @@ pub(super) async fn capture_start(
     handle: tauri::AppHandle,
     state: State<'_, DesktopState>,
     account_id: String,
-    view_id: String,
+    view_id: Option<String>,
     from: Option<i64>,
     until: Option<i64>,
 ) -> Result<CaptureStatus, AppError> {
@@ -345,7 +345,10 @@ pub(super) async fn capture_start(
     }
     let app = state.application.clone();
     tauri::async_runtime::spawn_blocking(move || {
-        app.start_source_capture_local(&account_id, &view_id, from, until)
+        match view_id {
+            Some(view_id) => app.start_source_capture_local(&account_id, &view_id, from, until),
+            None => app.start_enrolled_capture_local(&account_id, from, until),
+        }
     })
     .await
     .map_err(|_| AppError::internal())?

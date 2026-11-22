@@ -38,7 +38,7 @@ impl NativeProfile {
         self.enabled
             && match self.layout {
                 1 => true,
-                5 => matches!(
+                5 | 14 => matches!(
                     feature,
                     NativeFeature::Messaging
                         | NativeFeature::Mentions
@@ -157,6 +157,12 @@ pub const PROFILES: &[NativeProfile] = &[
         layout: 13,
         enabled: true,
     },
+    NativeProfile {
+        version: "4.2.0.53",
+        sha256: "ac6b174d98ee1b69e95c99a7a39c3197c8c167b7c6d32f5b72c7a7659c104825",
+        layout: 14,
+        enabled: true,
+    },
 ];
 
 /// Each feature is enabled independently for an exact verified core image.
@@ -165,7 +171,7 @@ pub fn settings_mask(version: &str, architecture: &str, sha256: &str) -> u32 {
         && PROFILES.iter().any(|p| {
             p.version == version
                 && p.sha256 == sha256
-                && (p.layout == 5 || p.sha256 == PROFILES[0].sha256)
+                && (matches!(p.layout, 5 | 14) || p.sha256 == PROFILES[0].sha256)
         })
     {
         7
@@ -324,6 +330,7 @@ mod tests {
             NativeFeature::FavoriteDownload,
         ] {
             assert!(current.require(feature).is_ok());
+            assert!(PROFILES.last().unwrap().require(feature).is_ok());
             assert!(PROFILES[0].require(feature).is_ok());
             assert!(PROFILES[1].require(feature).is_ok());
         }
@@ -346,7 +353,7 @@ mod tests {
         for p in PROFILES {
             assert_eq!(
                 settings_mask(p.version, "x86_64", p.sha256),
-                if p.layout == 5 || p.sha256 == PROFILES[0].sha256 {
+                if matches!(p.layout, 5 | 14) || p.sha256 == PROFILES[0].sha256 {
                     7
                 } else {
                     0

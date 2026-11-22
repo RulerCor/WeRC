@@ -80,7 +80,7 @@ static SharedMessage* __fastcall mention_factory(SharedMessage* output) {
 }
 static DWORD ensure_mention_factory() {
     if(factory_hook_created)return 0;
-    if(!core_base || (core_profile_id!=1&&core_profile_id!=5&&core_profile_id!=11&&core_profile_id!=12&&core_profile_id!=13))return ERROR_REVISION_MISMATCH;
+    if(!core_base || (core_profile_id!=1&&(core_profile_id!=5&&core_profile_id!=14)&&core_profile_id!=11&&core_profile_id!=12&&core_profile_id!=13))return ERROR_REVISION_MISMATCH;
     factory_tls=TlsAlloc();if(factory_tls==TLS_OUT_OF_INDEXES)return ERROR_NOT_ENOUGH_MEMORY;
     auto target=reinterpret_cast<void*>(core_address(core_base,0x6f4c70));
     auto status=MH_CreateHook(target,reinterpret_cast<void*>(&mention_factory),reinterpret_cast<void**>(&original_mention_factory));

@@ -230,3 +230,62 @@ fn automatic_view_does_not_choose_an_arbitrary_unowned_root() {
     );
     assert_eq!(f.reader.reads.load(Ordering::SeqCst), 0);
 }
+
+#[tokio::test]
+async fn recovery_api_archives_verified_sources_resumes_and_exports_through_mcp() {
+    use axum::{body::Body, http::Request};
+    use http_body_util::BodyExt;
+    use serde_json::{Value, json};
+    use tower::ServiceExt;
+
+    async fn call(app: &Arc<Application>, token: &str, method: &str, path: &str, body: Value) -> (u16, Value) {
+        let response = werc_http_api::router(app.clone()).oneshot(Request::builder()
+            .method(method).uri(path).header("Authorization", format!("Bearer {token}"))
+            .header("Content-Type", "application/json")
+            .body(Body::from(body.to_string())).unwrap()).await.unwrap();
+        let status = response.status().as_u16();
+        let bytes = response.into_body().collect().await.unwrap().to_bytes();
+        (status, serde_json::from_slice(&bytes).unwrap())
+    }
+    let f = Fixture::new();
+    let app = &f.app;
+    app.enable_api(true);
+    let writer = app.issue_token_local("owned writer", vec![f.account.clone()], vec!["messages:read".into(), "exports:create".into()], 1).unwrap();
+    let reader = app.issue_token_local("owned reader", vec![f.account.clone()], vec!["messages:read".into()], 1).unwrap();
+    let recovery = "/api/v1/messages/recovery";
+    let start = json!({"action":"start","account_id":f.account});
+    *f.reader.auto_sources.lock().unwrap() = vec![f.database.to_str().unwrap().to_owned()];
+    assert_eq!(call(app, &reader.secret, "POST", recovery, start.clone()).await.0, 403);
+    assert_eq!(call(app, &writer.secret, "POST", recovery, start.clone()).await.0, 409);
+    f.prepare().unwrap();
+    let (code, progress) = call(app, &reader.secret, "GET", &format!("/api/v1/messages/recovered/status?account_id={}", f.account), Value::Null).await;
+    assert_eq!(code, 200);
+    assert_eq!(progress["source_count"], 1);
+    assert!(progress.get("data").is_none());
+    assert_eq!(call(app, &reader.secret, "GET", "/api/v1/messages/recovered/status?account_id=other-account", Value::Null).await.0, 403);
+    assert_eq!(call(app, &writer.secret, "POST", recovery, start.clone()).await.0, 409);
+    for _ in 0..32 {
+        if app.step_backfill_local(&f.account).unwrap().pending_sources == 0 { break; }
+    }
+    let (code, mut current) = call(app, &writer.secret, "POST", recovery, start).await;
+    assert_eq!(code, 200, "{current}");
+    assert_eq!(current["source_count"], 1);
+    let id = current["id"].as_str().unwrap().to_owned();
+    for i in 0..32 {
+        if current["complete_selected_sources"] == true { break; }
+        let (code, next) = call(app, &writer.secret, "POST", recovery, json!({"action":"step","account_id":f.account,"id":id,"request_id":format!("owned-archive-step-{i:04}")})).await;
+        assert_eq!(code, 200, "{next}");
+        current = next;
+    }
+    assert_eq!(current["complete_selected_sources"], true);
+    assert_eq!(current["rows"], 500);
+    for (path, body) in [
+        (recovery, json!({"action":"status","account_id":f.account,"id":id})),
+        ("/api/v1/messages/recovery/export", json!({"account_id":f.account,"id":id,"format":"json","request_id":"owned-export-via-mcp-0001"})),
+    ] {
+        let (code, output) = call(app, &writer.secret, "POST", "/mcp/read", json!({"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"api_read","arguments":{"method":"POST","path":path,"body":body}}})).await;
+        assert_eq!(code, 200);
+        assert_eq!(output["result"]["isError"], false, "{output}");
+        assert_eq!(output["result"]["structuredContent"]["status"], 200);
+    }
+}

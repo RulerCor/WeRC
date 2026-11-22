@@ -132,11 +132,11 @@ impl CapabilityProvider for WindowsWechatProvider {
             ),
             (
                 "keys.acquire",
-                "只读Config.Cipher实验实现；须逐库确认与验真，获取进度/事件及更多精确版本尚未完成",
+                "当前平台不支持自动准备微信历史来源",
             ),
             (
                 "keys.import",
-                "密钥存储与 SQLCipher 验真尚未完成；不接收未保护的密钥",
+                "当前平台不支持导入微信来源密钥",
             ),
             (
                 "messages.read",
@@ -170,9 +170,17 @@ impl CapabilityProvider for WindowsWechatProvider {
         if cfg!(windows) {
             if let Some(acquisition) = pending.iter_mut().find(|c| c.id == "keys.acquire") {
                 acquisition.evidence = Evidence::Implemented;
-                acquisition.availability = Availability::Blocked;
+                acquisition.availability = Availability::NeedsSetup;
+                acquisition.reason = "连接已登录的受支持微信后，可自动准备本机消息来源；具体结果以来源读取为准".into();
                 acquisition.execution_mode = Some("local_read_only".into());
                 acquisition.requires_user_action = true;
+            }
+            if let Some(import) = pending.iter_mut().find(|c| c.id == "keys.import") {
+                import.evidence = Evidence::Implemented;
+                import.availability = Availability::NeedsSetup;
+                import.reason = "绑定本机来源后可手工导入，使用 Windows DPAPI 保存；能否解密由来源读取验证".into();
+                import.execution_mode = Some("local".into());
+                import.requires_user_action = true;
             }
             pending.push(Capability { id:"wechat.data_sources".into(), evidence:Evidence::Implemented, availability:Availability::NeedsSetup, reason:"显式检测系统文档/手选目录的数据库元数据；不读取内容，不证明账号归属或微信已连接".into(), execution_mode:Some("local".into()), requires_foreground:false, requires_user_action:true });
             pending.push(Capability {

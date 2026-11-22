@@ -22,7 +22,7 @@ static Snapshot remote_detail(Lease* lease) {
     __try {
         static const unsigned char prefix[16] = {
             0x55,0x41,0x57,0x41,0x56,0x41,0x55,0x41,0x54,0x56,0x57,0x53,0x48,0x81,0xec,0xd8};
-        if ((core_profile_id != 1 && core_profile_id != 5) ||
+        if ((core_profile_id != 1 && (core_profile_id!=5&&core_profile_id!=14)) ||
             std::memcmp(reinterpret_cast<const void*>(core_address(core_base,0x2fd0fa0)), prefix, sizeof(prefix))) {
             HeapFree(GetProcessHeap(), 0, result); lease->remote_context = nullptr;
             return SNAP_INVALID;

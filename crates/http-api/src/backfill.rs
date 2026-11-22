@@ -19,6 +19,28 @@ fn access(app: &Application, secret: &str, account: &str) -> Result<(), AppError
     p.require("messages:read")?;
     p.require_account(account)
 }
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(super) struct StatusInput {
+    account_id: String,
+}
+
+pub(super) async fn status(
+    State(state): State<ApiState>,
+    headers: HeaderMap,
+    Query(query): Query<StatusInput>,
+) -> Result<Json<werc_application::backfill::BackfillStatus>, ApiError> {
+    let secret = bearer(&headers)?.to_owned();
+    access(&state.application, &secret, &query.account_id)?;
+    let app = state.application.clone();
+    let account = query.account_id.clone();
+    let result = local_work(state.application, move |app| {
+        app.backfill_status_local(&query.account_id)
+    }).await?;
+    access(&app, &secret, &account)?;
+    Ok(Json(result))
+}
+
 pub(super) async fn page(
     State(state): State<ApiState>,
     headers: HeaderMap,

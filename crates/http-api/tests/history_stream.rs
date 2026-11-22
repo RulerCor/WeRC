@@ -622,6 +622,41 @@ fn begin_and_batches_and_end_are_invisible_until_the_stream_returns_success() {
 }
 
 #[test]
+fn interactive_import_waits_for_an_active_import_and_reuses_the_committed_snapshot() {
+    use std::{sync::mpsc, time::Duration};
+    let f = Fixture::new(4, 2, 32);
+    let (entered_tx, entered_rx) = mpsc::channel();
+    let (release_tx, release_rx) = mpsc::channel();
+    let release_rx = Mutex::new(release_rx);
+    *f.provider.observer.lock().unwrap() = Some(Box::new(move |stage| {
+        if stage == Stage::AfterBegin {
+            entered_tx.send(()).unwrap();
+            release_rx.lock().unwrap().recv_timeout(Duration::from_secs(5)).unwrap();
+        }
+    }));
+    let first_app = f.app.clone();
+    let first_account = f.account.clone();
+    let first_request = f.request();
+    let first = std::thread::spawn(move || first_app.import_history_local(&first_account, first_request, true));
+    entered_rx.recv_timeout(Duration::from_secs(5)).unwrap();
+    let second_app = f.app.clone();
+    let second_account = f.account.clone();
+    let second_request = f.request();
+    let (result_tx, result_rx) = mpsc::channel();
+    let second = std::thread::spawn(move || {
+        result_tx.send(second_app.import_history_local(&second_account, second_request, true)).unwrap();
+    });
+    let early = result_rx.recv_timeout(Duration::from_millis(150));
+    release_tx.send(()).unwrap();
+    let first_source = first.join().unwrap().unwrap();
+    assert!(matches!(early, Err(mpsc::RecvTimeoutError::Timeout)), "interactive import must wait instead of returning BUSY");
+    let second_source = result_rx.recv_timeout(Duration::from_secs(5)).unwrap().unwrap();
+    second.join().unwrap();
+    assert_eq!(first_source.id, second_source.id);
+    assert_eq!(f.repository.history_sources(&f.account).unwrap().len(), 1);
+}
+
+#[test]
 fn schema_errors_protocol_corruption_and_missing_end_abort_every_staged_row_and_allow_retry() {
     for fault in [
         Fault::Schema,

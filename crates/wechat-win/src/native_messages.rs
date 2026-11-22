@@ -305,6 +305,9 @@ impl Transport {
             if matches!(request.u32(8),70|71) && result.u32(12)==50 {
                 return Err(AppError::new("WECHAT_SETTINGS_UNAVAILABLE","此精确构建没有已验证的后台原生设置能力"));
             }
+            if matches!(request.u32(8), 1 | 2) && result.u32(12) == 1245 {
+                return Err(AppError::new("NATIVE_LOGIN_REQUIRED", "请先在微信登录同一账号"));
+            }
             if request.u32(8) == 1 {
                 let detail = match result.u32(12) {
                     1306 => Some((

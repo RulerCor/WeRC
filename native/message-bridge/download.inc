@@ -192,7 +192,7 @@ static DWORD download_dispatch(WercPacket& p){
     if(op==WercOp::DownloadImageBegin || op==WercOp::DownloadFileBegin || op==WercOp::DownloadVideoBegin || op==WercOp::DownloadOriginalImageBegin || op==WercOp::DownloadFavoriteBegin){
         if(op==WercOp::DownloadFavoriteBegin ? !(p.dropped==2 || p.dropped==4 || p.dropped==5) : p.dropped!=(op==WercOp::DownloadFileBegin?5u:op==WercOp::DownloadVideoBegin?4u:op==WercOp::DownloadOriginalImageBegin?1u:2u))return ERROR_INVALID_PARAMETER;
         const auto now=uint64_t(std::time(nullptr));
-        if((core_profile_id!=1&&core_profile_id!=5) || p.deadline<=now || p.deadline>now+120 || !download_descriptor_valid(p))return ERROR_INVALID_PARAMETER;
+        if((core_profile_id!=1&&(core_profile_id!=5&&core_profile_id!=14)) || p.deadline<=now || p.deadline>now+120 || !download_descriptor_valid(p))return ERROR_INVALID_PARAMETER;
         if(download_result || live_tasks || live_completions)return ERROR_BUSY;
         const DWORD status=download_factory_install();if(status)return status;
         auto value=std::make_shared<DownloadResult>();value->packet=p;

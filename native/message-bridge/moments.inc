@@ -40,7 +40,7 @@ constexpr size_t kFinishedEvent = 0x2a8;
 
 // Exact profile-1 mappings; unsupported builds are rejected by host identity checks.
 static uintptr_t address(uintptr_t rva) {
-    if((core_profile_id!=1&&core_profile_id!=5)||!core_base)return 0;
+    if((core_profile_id!=1&&(core_profile_id!=5&&core_profile_id!=14))||!core_base)return 0;
     switch(rva){
     case kModelCtor:return core_address(core_base,0x43a5190);
     case kModelControlTable:return core_address(core_base,0x91b7a08);
@@ -57,7 +57,7 @@ static uintptr_t address(uintptr_t rva) {
     default:return 0;
     }
 }
-static size_t model_field(size_t offset){return core_profile_id==5 && offset>=0x30 ? offset+0x10 : offset;}
+static size_t model_field(size_t offset){return (core_profile_id==5||core_profile_id==14) && offset>=0x30 ? offset+0x10 : offset;}
 static bool emoticon_account_matches(const SharedMessage& app,const char* expected){return app.object&&app.control&&same_account(expected);}
 
 struct VectorView { void* begin; void* end; void* capacity; };

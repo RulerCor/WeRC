@@ -165,7 +165,7 @@ static bool account_snapshot(char* output) {
             return ascii_id(output,128) && std::strcmp(output,"filehelper");
         } __except (EXCEPTION_EXECUTE_HANDLER) { return false; }
     }
-        if (!core_base || (core_profile_id != 1 && core_profile_id != 5 && core_profile_id != 6 && core_profile_id != 7 && core_profile_id != 8 && core_profile_id != 9 && core_profile_id != 10 && core_profile_id != 12 && core_profile_id != 13)) return false;
+        if (!core_base || (core_profile_id != 1 && (core_profile_id!=5&&core_profile_id!=14) && core_profile_id != 6 && core_profile_id != 7 && core_profile_id != 8 && core_profile_id != 9 && core_profile_id != 10 && core_profile_id != 12 && core_profile_id != 13)) return false;
         auto app = *reinterpret_cast<unsigned char**>(core_address(core_base,0xb912690));
         if (!app || *reinterpret_cast<uintptr_t*>(app) != core_address(core_base,0x8d804e8)) return false;
         auto context = *reinterpret_cast<unsigned char**>(app+0x68);
@@ -241,7 +241,7 @@ static uint64_t completion_message_id(const NativeCompletion* self,uint32_t* sta
     __try {
         *stage=1;const auto object=static_cast<unsigned char*>(self->observed.object);
         if(!object || !self->observed.control)return 0;
-        *stage=2;if(!core_base || (core_profile_id!=1&&core_profile_id!=5&&core_profile_id!=6&&core_profile_id!=7&&core_profile_id!=8&&core_profile_id!=9&&core_profile_id!=10&&core_profile_id!=11&&core_profile_id!=12&&core_profile_id!=13) || !same_account(binding.account))return 0;
+        *stage=2;if(!core_base || (core_profile_id!=1&&(core_profile_id!=5&&core_profile_id!=14)&&core_profile_id!=6&&core_profile_id!=7&&core_profile_id!=8&&core_profile_id!=9&&core_profile_id!=10&&core_profile_id!=11&&core_profile_id!=12&&core_profile_id!=13) || !same_account(binding.account))return 0;
         *stage=3;if(*reinterpret_cast<uintptr_t*>(object)!=core_address(core_base,0x8e53588))return 0;
         *stage=4;if(*reinterpret_cast<uint64_t*>(object+0x118)!=1)return 0;
         *stage=5;if(!native_text_equals(reinterpret_cast<SmallString*>(object+0xb0),self->expected_target))return 0;
@@ -508,7 +508,7 @@ static DWORD dispatch(WercPacket& p) {
     if (op==WercOp::Inspect || op==WercOp::Attach) {
         if (p.pid!=GetCurrentProcessId() || p.process_start!=creation_time(GetCurrentProcess())) return ERROR_INVALID_PARAMETER;
         const auto core=GetModuleHandleW(L"Weixin.dll");
-        if (!core || !core_fingerprint(core) || (core_profile_id!=1&&core_profile_id!=5&&core_profile_id!=6&&core_profile_id!=7&&core_profile_id!=8&&core_profile_id!=9&&core_profile_id!=10&&core_profile_id!=11&&core_profile_id!=12&&core_profile_id!=13)) return ERROR_REVISION_MISMATCH;
+        if (!core || !core_fingerprint(core) || (core_profile_id!=1&&(core_profile_id!=5&&core_profile_id!=14)&&core_profile_id!=6&&core_profile_id!=7&&core_profile_id!=8&&core_profile_id!=9&&core_profile_id!=10&&core_profile_id!=11&&core_profile_id!=12&&core_profile_id!=13)) return ERROR_REVISION_MISMATCH;
         core_base=reinterpret_cast<uintptr_t>(core);
         char account[128]{};
         if (!account_snapshot(account)) return ERROR_NOT_LOGGED_ON;

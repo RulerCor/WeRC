@@ -81,7 +81,7 @@ static bool fingerprint_anchors(unsigned action) {
     if (action < 1 || action > 4) return false;
     const uintptr_t entry = action == 1 ? 0x30640f0 : action == 2 ? 0x3065ac0 : action == 3 ? 0x2ff8bc0 : 0x2ffb740;
     const unsigned char* prefix = action == 1 ? like : action == 2 ? comment : action == 3 ? unlike : remove;
-    return core_base && (core_profile_id==1 || core_profile_id==5) &&
+    return core_base && (core_profile_id==1 || (core_profile_id==5||core_profile_id==14)) &&
         std::memcmp(reinterpret_cast<const void*>(interaction_address(core_base, entry)), prefix, 16) == 0 &&
         std::memcmp(reinterpret_cast<const void*>(interaction_address(core_base, 0x43b1800)), validate, 16) == 0;
 }
