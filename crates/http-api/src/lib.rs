@@ -114,6 +114,7 @@ impl IntoResponse for ApiError {
             | "FORWARD_FILE_CACHE_UNAVAILABLE"
             | "MESSAGE_NOT_FOUND" => StatusCode::NOT_FOUND,
             "BUSY" | "RECEIVED_MEDIA_BUSY" | "NATIVE_TARGET_LIMIT" => StatusCode::TOO_MANY_REQUESTS,
+            "RECEIVED_MEDIA_INVALID" => StatusCode::UNPROCESSABLE_ENTITY,
             "RECOVERY_SOURCES_PENDING" => StatusCode::CONFLICT,
             _ => StatusCode::INTERNAL_SERVER_ERROR,
         };

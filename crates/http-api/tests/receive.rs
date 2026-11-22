@@ -1329,6 +1329,43 @@ fn receive_commit_and_ack_continue_while_image_download_waits() {
 }
 
 #[tokio::test]
+async fn native_image_api_handles_verified_group_envelope_and_reports_invalid_metadata() {
+    use axum::{body::Body, http::Request};
+    use http_body_util::BodyExt;
+    use tower::ServiceExt;
+    let f = Fixture::new();
+    let login = f.provider.context.lock().unwrap().sender_id.clone();
+    *f.provider.route.lock().unwrap() = Some(ReceivedRoute {
+        sender: "owned@chatroom".into(), receiver: login, conversation: "owned@chatroom".into(),
+    });
+    let sample = include_str!("../../../tests/fixtures/received-image-group-1823-synthetic.xml");
+    for (sequence, metadata) in [(1, sample.to_owned()), (2, sample.replace("cdnmidimgurl=", "missingkey="))] {
+        *f.provider.pending.lock().unwrap() = Some(ReceivedText {
+            sequence, native_message_id: (9000 + sequence).to_string(), text: String::new(),
+            message_type: 3, metadata: Some(metadata),
+        });
+        f.step().unwrap();
+    }
+    let positions: Vec<_> = f.rows().iter().map(|r| r.position).collect();
+    let writer = f.app.issue_token_local("writer", vec![f.account.clone()],
+        vec!["messages:read".into(), "media:write".into()], 1).unwrap();
+    f.app.enable_api(true);
+    let router = werc_http_api::router(Arc::new(f.app));
+    let req = |pos| Request::builder().method("POST")
+        .uri(format!("/api/v1/messages/native/{pos}/image?account_id={}", f.account))
+        .header("Authorization", format!("Bearer {}", writer.secret))
+        .body(Body::empty()).unwrap();
+    assert_eq!(router.clone().oneshot(req(positions[0])).await.unwrap().status(), 200);
+    let response = router.oneshot(req(positions[1])).await.unwrap();
+    assert_eq!(response.status(), 422);
+    let body: serde_json::Value = serde_json::from_slice(&response.into_body().collect().await.unwrap().to_bytes()).unwrap();
+    assert_eq!(body["error"]["code"], "RECEIVED_MEDIA_INVALID");
+    assert_eq!(body["error"]["retryable"], false);
+    assert!(body["error"]["message"].as_str().unwrap().contains("请勿原样重试"));
+    assert_eq!(f.provider.downloads.load(Ordering::SeqCst), 1);
+}
+
+#[tokio::test]
 async fn native_image_api_requires_explicit_write_and_read_never_downloads() {
     use axum::{body::Body, http::Request};
     use http_body_util::BodyExt;

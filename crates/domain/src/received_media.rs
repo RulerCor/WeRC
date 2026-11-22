@@ -22,11 +22,20 @@ pub struct ReceivedImageDescriptor {
     pub declared_size: u64,
 }
 fn invalid() -> AppError {
-    AppError::new("RECEIVED_MEDIA_INVALID", "媒体元数据不符合已支持的有界格式")
+    AppError::new("RECEIVED_MEDIA_INVALID", "媒体元数据不符合已支持的格式，请勿原样重试")
 }
 /// Parse only msg/img's medium image. Never chooses a URL or filesystem path.
 pub fn image_descriptor(message: &ReceivedText) -> AppResult<ReceivedImageDescriptor> {
-    attribute_descriptor(message, 3, "img", "cdnmidimgurl", RECEIVED_MEDIA_MAX_BYTES)
+    image_descriptor_in_conversation(message, false)
+}
+/// A verified group observation may contain the native member envelope before XML.
+pub fn image_descriptor_in_conversation(
+    message: &ReceivedText,
+    is_verified_group: bool,
+) -> AppResult<ReceivedImageDescriptor> {
+    attribute_descriptor(
+        message, 3, "img", "cdnmidimgurl", RECEIVED_MEDIA_MAX_BYTES, is_verified_group,
+    )
 }
 pub struct ReceivedVideoDescriptor {
     pub media: ReceivedImageDescriptor,
@@ -40,6 +49,7 @@ pub fn video_descriptor(message: &ReceivedText) -> AppResult<ReceivedVideoDescri
             "videomsg",
             "cdnvideourl",
             RECEIVED_VIDEO_MAX_BYTES,
+            false,
         )?,
     })
 }
@@ -49,11 +59,26 @@ fn attribute_descriptor(
     element: &str,
     key_attribute: &str,
     maximum: u64,
+    is_verified_group: bool,
 ) -> AppResult<ReceivedImageDescriptor> {
     if message.message_type != message_type || !message.valid_content() {
         return Err(invalid());
     }
-    let xml = message.metadata.as_deref().ok_or_else(invalid)?;
+    let metadata = message.metadata.as_deref().ok_or_else(invalid)?;
+    let xml = if is_verified_group && !metadata.starts_with('<') {
+        let (member, xml) = metadata.split_once(":\n").ok_or_else(invalid)?;
+        if member.is_empty()
+            || member.len() >= 128
+            || !member.bytes().all(|b|
+                b.is_ascii_alphanumeric() || matches!(b, b'_' | b'-' | b'.' | b'@'))
+            || !xml.starts_with('<')
+        {
+            return Err(invalid());
+        }
+        xml
+    } else {
+        metadata
+    };
     let mut reader = Reader::from_str(xml);
     reader.config_mut().expand_empty_elements = true;
     let mut stack = Vec::new();
@@ -174,6 +199,33 @@ mod tests {
         let d = image_descriptor(&message(xml(""))).unwrap();
         assert_eq!(d.declared_size, 100);
         assert_eq!(d.file_key.len(), 8);
+    }
+    #[test]
+    fn synthetic_group_observations_preserve_the_native_envelope_and_field_shapes() {
+        // Synthetic member and CDN values; lengths and XML envelope reflect
+        // the three observed group-image shapes, without message content or keys.
+        for (sample, size) in [
+            (include_str!("../../../tests/fixtures/received-image-group-1823-synthetic.xml"), 37934),
+            (include_str!("../../../tests/fixtures/received-image-group-1836-synthetic.xml"), 41593),
+            (include_str!("../../../tests/fixtures/received-image-group-1895-synthetic.xml"), 40007),
+        ] {
+            let m = message(sample.to_owned());
+            assert!(image_descriptor(&m).is_err());
+            let d = image_descriptor_in_conversation(&m, true).unwrap();
+            assert_eq!(d.file_key.len(), 194);
+            assert_eq!(d.aes_key.len(), 32);
+            assert_eq!(d.declared_size, size);
+            for bad in [
+                sample.replace("wxid_synthetic00000", "bad/id"),
+                sample.replace(":\n", ": "),
+                sample.replace("cdnmidimgurl=", "missingkey="),
+                sample.replace(&"d4".repeat(97), "https://example.invalid"),
+                sample.replace(&"a1".repeat(16), "short"),
+                sample.replace(&format!("length=\"{size}\""), "length=\"8388609\""),
+            ] {
+                assert!(image_descriptor_in_conversation(&message(bad), true).is_err());
+            }
+        }
     }
     #[test]
     fn video_uses_its_own_type_and_exact_descriptor() {

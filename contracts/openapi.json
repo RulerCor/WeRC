@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "WeRC Native API",
-    "version": "1.2.2",
+    "version": "1.2.3",
     "description": "Windows 微信消息与资料接口。HTTP 和 MCP 共用同一核心；发送结果以任务状态为准，历史补读受本机数据限制。"
   },
   "servers": [
@@ -1537,7 +1537,7 @@
       ],
       "post": {
         "operationId": "downloadNativeReceivedImage",
-        "description": "需要messages:read及media:write和资料范围授权。显式连接后按已认证的会话图片观测下载中图；存在未过期缓存则复用。声明/完成字节各最多8MiB，JPEG或静态PNG完整解码后规范化PNG，加密保存24小时；不发送消息，不清gap。下载与接收ACK并发；断开会取消下载。排队执行前及输出前重新鉴权。仅验证过的4.1.15.13构建。",
+        "description": "需要messages:read及media:write和资料范围授权。显式连接后按已认证的会话图片观测下载中图；存在未过期缓存则复用。声明/完成字节各最多8MiB，JPEG或静态PNG完整解码后规范化PNG，加密保存24小时；不发送消息，不清gap。下载与接收ACK并发；断开会取消下载。排队执行前及输出前重新鉴权。已验证匹配的4.1.15.13及4.2.0.53构建。",
         "responses": {
           "200": {
             "description": "data为FileAsset，sent=false"
@@ -1550,6 +1550,9 @@
           },
           "404": {
             "description": "观测不存在"
+          },
+          "422": {
+            "description": "RECEIVED_MEDIA_INVALID：观测不是图片或图片元数据不符合支持的格式；error.retryable=false，不要原样重试。"
           },
           "429": {
             "description": "另一下载进行中"

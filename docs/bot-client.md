@@ -62,6 +62,8 @@ members为1至8个不同的精确账号，不接受昵称或@所有人。客户�
 
 短轮询可使用 `/api/v1/messages/native?account_id=...&after=0`，用返回的 next_cursor 继续。平台事件流的 event_id 与消息流的 position **是两个不同游标**，分别保存。不能用原生 sequence 代替跨重连位置。
 
+接收图片：`POST /api/v1/messages/native/{position}/image?account_id=...` 下载，成功后用同路径 `GET` 读取 PNG。若返回 HTTP 422、`error.code=RECEIVED_MEDIA_INVALID`、`error.retryable=false`，表示消息类型或元数据不受支持，不要对相同记录原样重试。HTTP 429 表示另一媒体下载正在进行。
+
 ## 历史补读与导出
 
 - 看自动补读进度：`GET /api/v1/messages/recovered/status?account_id=账号ID`。按位置取已保存记录用 `GET /api/v1/messages/recovered`，持续订阅用 `/api/v1/messages/recovered/stream`。补读仅覆盖本机微信已保存的数据，重叠结果按 `id` 和 `content_digest` 合并。

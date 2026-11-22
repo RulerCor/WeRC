@@ -1,5 +1,5 @@
 use crate::Application;
-use werc_domain::{AppError, AppResult, file::FileAsset, received_media::image_descriptor};
+use werc_domain::{AppError, AppResult, file::FileAsset};
 
 impl Application {
     fn live_file_descriptor(
@@ -269,7 +269,13 @@ impl Application {
                 "观测所属登录身份与当前连接不同",
             ));
         }
-        let descriptor = image_descriptor(&row.payload.message)?;
+        let verified_group = row.payload.route.as_ref().is_some_and(|route| {
+            route.valid_for(&context.sender_id)
+                && route.conversation.ends_with("@chatroom")
+        });
+        let descriptor = werc_domain::received_media::image_descriptor_in_conversation(
+            &row.payload.message, verified_group,
+        )?;
         let bytes = self
             .provider
             .download_received_image(&context, &descriptor)?;
