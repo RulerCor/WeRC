@@ -734,17 +734,29 @@ fn initialize(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Error>> 
     });
     let recovery_application = application.clone();
     let recovery_handle = app.clone();
+    let recovery_provider = native_provider.clone();
     tauri::async_runtime::spawn(async move {
         loop {
             let worker = recovery_application.clone();
             let handle = recovery_handle.clone();
+            let provider = recovery_provider.clone();
             let _ = tauri::async_runtime::spawn_blocking(move || {
                 if let Some(account) = worker.current_connection_local()?.account_id {
-                    if let Err(error) = worker.discover_backfill_sources_local(&account) {
-                        diagnostics::record(&handle, "backfill", &error);
-                    }
-                    if let Err(error) = worker.step_backfill_local(&account) {
-                        diagnostics::record(&handle, "backfill", &error);
+                    if provider.status().is_ok_and(|status| {
+                        status.connected && status.account_id.as_deref() == Some(account.as_str())
+                    }) {
+                        // A disconnected account is expected between sessions. Connection attempts
+                        // have their own diagnostics; keep backfill errors for actual failures.
+                        if let Err(error) = worker.discover_backfill_sources_local(&account)
+                            && error.code != "NATIVE_NOT_CONNECTED"
+                        {
+                            diagnostics::record(&handle, "backfill", &error);
+                        }
+                        if let Err(error) = worker.step_backfill_local(&account)
+                            && error.code != "NATIVE_NOT_CONNECTED"
+                        {
+                            diagnostics::record(&handle, "backfill", &error);
+                        }
                     }
                     if let Err(error) = worker.step_message_preservation_local(&account) {
                         diagnostics::record(&handle, "message-preservation", &error);

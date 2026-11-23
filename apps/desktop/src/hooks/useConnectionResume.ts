@@ -1,10 +1,17 @@
 import {useEffect,useState} from 'react';
 import {command,desktopAvailable,type Bootstrap} from '../lib/desktop';
-import {readResume} from '../lib/connection-resume';
+import {componentRepairHint,nativeConnectionErrorText,readResume} from '../lib/connection-resume';
 import type {NativeStatus} from '../pages/NativeConnection';
 
 type ResumeNotice = {accountId:string;message:string;kind:'connection'|'api'};
 const retryMs=5000;
+const retryMessages=new Map([
+  ['NATIVE_CORE_UNAVAILABLE','等待微信核心模块就绪，稍后自动重试。'],
+  ['NATIVE_LOGIN_REQUIRED','等待同一账号登录微信，登录后自动恢复连接。'],
+  ['NATIVE_IDENTITY_UNVERIFIED','等待核验已登录的微信账号，稍后自动重试。'],
+  ['NATIVE_PROCESS_UNAVAILABLE','微信进程已退出，稍后重新检测。'],
+  ['NATIVE_BUSY','微信连接正在释放，稍后自动恢复。'],
+]);
 
 // Only the account and options explicitly approved by the user may be restored.
 export function useConnectionResume(enabled:boolean,data:Bootstrap,nativeStatus:NativeStatus|null,refresh:()=>Promise<void>){
@@ -31,7 +38,8 @@ export function useConnectionResume(enabled:boolean,data:Bootstrap,nativeStatus:
       try{
         let status=await command<NativeStatus>('native_status');
         if(!preference())return;
-        if(!status.connected&&saved.connect&&status.component_available){
+        if(!status.connected&&saved.connect){
+          if(!status.component_available){show(kind,componentRepairHint);return;}
           const current=await command<Bootstrap>('bootstrap');
           if(current.current_connection.account_id!==accountId||current.current_connection.selection_required||!preference()?.connect)return;
           const ids=await command<number[]>('native_processes',{accountId});
@@ -48,14 +56,15 @@ export function useConnectionResume(enabled:boolean,data:Bootstrap,nativeStatus:
             await refresh();
           }catch(error){
             const code=(error as {code?:string}|null)?.code;
-            if(['NATIVE_LOGIN_REQUIRED','NATIVE_IDENTITY_UNVERIFIED','NATIVE_PROCESS_UNAVAILABLE','NATIVE_BUSY'].includes(code??'')){
+            const retryMessage=retryMessages.get(code??'');
+            if(retryMessage){
               failedProcess=ids[0];retryAfter=Date.now()+30000;
-              failedMessage=code==='NATIVE_BUSY'?'微信连接正在释放，稍后自动恢复。':'等待同一账号登录微信，登录后自动恢复连接。';
+              failedMessage=retryMessage;
               show(kind,failedMessage);
             }else if(!['BUSY','NATIVE_ALREADY_CONNECTED','CONNECTION_CHANGED'].includes(code??'')){
               retryAfter=Infinity;
               failedProcess=ids[0];
-              failedMessage=`自动连接未成功：${error instanceof Error?error.message:String(error)}。可在连接页重试。`;
+              failedMessage=code==='NATIVE_COMPONENT_INVALID'?nativeConnectionErrorText(error):`自动连接未成功：${nativeConnectionErrorText(error)}。可在连接页重试。`;
               show(kind,failedMessage);
             }
             return;

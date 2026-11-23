@@ -2,7 +2,7 @@ import {useEffect,useRef,useState} from 'react';
 import {command,desktopAvailable} from '../lib/desktop';
 import type {Workbench} from '../hooks/useWorkbench';
 import {HelpTip} from '../components/HelpTip';
-import {rememberConnection} from '../lib/connection-resume';
+import {componentRepairHint,nativeConnectionErrorText,rememberConnection} from '../lib/connection-resume';
 export interface NativeStatus {component_available:boolean;connected:boolean;account_id:string|null;error_code:string|null;scope:string;process_id?:number|null}
 export function NativeConnection({accountId,...workbench}:Workbench&{accountId:string}) {
   const {data,busy,act}=workbench;
@@ -20,7 +20,7 @@ export function NativeConnection({accountId,...workbench}:Workbench&{accountId:s
     const ids=selected?[selected]:await detect();
     if(ticket!==generation.current)return;
     if(ids.length!==1){setError(ids.length?'检测到多个微信进程，请在下方选择需要连接的进程。':'未检测到已绑定的微信进程，请先打开并登录电脑微信。');return;}
-    const next=await command<NativeStatus>('native_connect',{accountId,revision:data.current_connection.revision,processId:ids[0]});
+    const next=await command<NativeStatus>('native_connect',{accountId,revision:data.current_connection.revision,processId:ids[0]}).catch(e=>{throw new Error(nativeConnectionErrorText(e));});
     if(ticket===generation.current)setStatus(next);
     if(next.connected)rememberConnection(accountId,true);
   }
@@ -31,7 +31,7 @@ export function NativeConnection({accountId,...workbench}:Workbench&{accountId:s
       {processes.length>1&&<><label>当前进程<select aria-label="原生微信进程" disabled={busy} value={pid} onChange={e=>setPid(e.target.value)}><option value="">请选择</option>{processes.map(p=><option key={p} value={p}>{p}</option>)}</select></label><button className="button" disabled={busy||!pid} onClick={()=>void act(()=>connect(Number(pid)))}>连接所选进程</button></>}
     </div>}
     {!binding&&<p className="field">先在“配置”中绑定本机客户端。</p>}
-    {status&&!status.component_available&&<p className="field">此构建未附带通过摘要校验的原生组件。</p>}
+    {status&&!status.component_available&&<p className="field">{componentRepairHint}</p>}
     {(status?.error_code||error)&&<p className="error-notice" role="alert">{error||(['INTERNAL_ERROR','KEY_PROTECTION_FAILED'].includes(status?.error_code??'')&&status?.connected?'接收保存暂时失败，保留待确认消息并自动重试。':status?.error_code==='NATIVE_ADAPTER_PENDING'?'当前微信版本的原生通道待适配':status?.error_code==='NATIVE_BUILD_UNSUPPORTED'?'当前微信构建暂不支持原生通道':status?.error_code)}{status?.error_code&&!status.connected&&<HelpTip label="连接状态详情">错误码：{status.error_code}。精确版本支持范围见下方说明。</HelpTip>}{status?.connected&&status.error_code&&<HelpTip label="接收保存失败说明">{status.error_code==='KEY_PROTECTION_FAILED'?'Windows密钥保护暂时失败，请检查当前Windows用户环境。':'请检查可用磁盘空间与产品数据文件是否可写。'}错误码：{status.error_code}。尚未保存的消息不会被确认消费；原生缓冲有限，持续故障仍可能产生缺口。</HelpTip>}</p>}
     <details><summary>支持范围</summary><p className="field">自动检测实际加载的微信版本与 DLL 指纹，并选择匹配的适配档案。支持 4.2.0.53、4.2.0.52、4.1.15.13 和 4.1.13.7 的匹配 x64 构建。以连接时逐项检测的结果为准。文字、图片、语音、文件、视频、表情、引用与群提及通过同一发送队列处理；接收消息与按需取得的媒体加密保存。连接中断后自动补读已发现的来源，未同步或已删除的内容可能无法恢复。</p><HelpTip label="格式与发送结果说明">文字最多10000个UTF-8字节；语音最长60秒，导入16kHz单声道PCM16；普通文件、图片和发送视频各有格式与大小限制，预览时会检查。桌面发送先预览批准，授权Bot可直接提交。提交、服务端接受与接收端确认分别记录；结果未知时只回查，不自动重发。</HelpTip></details>
   </section>;

@@ -22,6 +22,7 @@ fn valid_stage(stage: &str) -> bool {
         stage,
         "receive"
             | "backfill"
+            | "native-connection"
             | "send"
             | "task"
             | "message-preservation"
@@ -280,8 +281,10 @@ fn component(name: &'static str, expected: Option<&str>, directory: &std::path::
             return "not_assembled";
         };
         let path = directory.join(name);
-        let Ok(metadata) = std::fs::symlink_metadata(&path) else {
-            return "missing";
+        let metadata = match std::fs::symlink_metadata(&path) {
+            Ok(metadata) => metadata,
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => return "missing",
+            Err(_) => return "unreadable",
         };
         if !metadata.is_file() || linked(&metadata) || metadata.len() > 256 * 1024 * 1024 {
             return "invalid_file";
@@ -312,7 +315,7 @@ fn report(handle: &tauri::AppHandle) -> Result<Report, AppError> {
     let state = handle.state::<DesktopState>();
     let native = state.native_provider.status()?;
     let diagnostics = handle.state::<Diagnostics>();
-    let _guard = diagnostics.last.lock().map_err(|_| AppError::internal())?;
+    let guard = diagnostics.last.lock().map_err(|_| AppError::internal())?;
     diagnostics.checked()?;
     let mut records = Vec::new();
     // Reports project only logger-owned fields, even if a user edited the file.
@@ -357,6 +360,7 @@ fn report(handle: &tauri::AppHandle) -> Result<Report, AppError> {
             }
         }
     }
+    drop(guard);
     if records.len() > 200 {
         records.drain(..records.len() - 200);
     }
@@ -423,6 +427,24 @@ pub(super) async fn export_diagnostic_report(
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn reports_missing_invalid_modified_and_verified_components() {
+        let root = std::env::temp_dir().join(format!("werc-component-test-{}", uuid::Uuid::new_v4()));
+        std::fs::create_dir(&root).unwrap();
+        let expected = hex::encode(Sha256::digest(b"bundled component"));
+        let name = "worker.exe";
+        let path = root.join(name);
+        assert_eq!(component(name, None, &root).status, "not_assembled");
+        assert_eq!(component(name, Some(&expected), &root).status, "missing");
+        std::fs::create_dir(&path).unwrap();
+        assert_eq!(component(name, Some(&expected), &root).status, "invalid_file");
+        std::fs::remove_dir(&path).unwrap();
+        std::fs::write(&path, b"modified component").unwrap();
+        assert_eq!(component(name, Some(&expected), &root).status, "hash_mismatch");
+        std::fs::write(&path, b"bundled component").unwrap();
+        assert_eq!(component(name, Some(&expected), &root).status, "verified");
+        std::fs::remove_dir_all(root).unwrap();
+    }
     #[test]
     fn logs_rotate_deduplicate_and_preserve_user_data() {
         let root = std::env::temp_dir().join(format!("werc-log-test-{}", uuid::Uuid::new_v4()));

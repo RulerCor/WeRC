@@ -262,7 +262,8 @@ pub(super) async fn native_connect(
     }
     let application = state.application.clone();
     let provider = state.native_provider.clone();
-    tauri::async_runtime::spawn_blocking(move || {
+    let started = std::time::Instant::now();
+    let result = tauri::async_runtime::spawn_blocking(move || {
         let slot = application.current_connection_local()?;
         if slot.account_id.as_deref() != Some(&account_id) || slot.revision != revision {
             return Err(AppError::new("CONNECTION_CHANGED", "当前微信配置已变化"));
@@ -286,7 +287,16 @@ pub(super) async fn native_connect(
         provider.status()
     })
     .await
-    .map_err(|_| AppError::internal())?
+    .map_err(|_| AppError::internal())
+    .flatten();
+    match &result {
+        Ok(status) if status.connected => {
+            diagnostics::event(&app, "native-connection", "CONNECTED", Some(started.elapsed()));
+        }
+        Err(error) => diagnostics::record(&app, "native-connection", error),
+        _ => {}
+    }
+    result
 }
 #[tauri::command]
 pub(super) async fn native_disconnect(

@@ -67,9 +67,13 @@ pub(super) async fn choose_directory_export_path(
     handle: tauri::AppHandle,
     window: tauri::WebviewWindow,
     format: LiveExportFormat,
-    suggested_name: String,
+    suggested_name: Option<String>,
 ) -> Result<Option<String>, AppError> {
-    choose_export_path(handle, window, format.extension().into(), suggested_name, false).await
+    let extension = format.extension();
+    let suggested_name = suggested_name
+        .filter(|name| !name.trim().is_empty())
+        .unwrap_or_else(|| format!("WeRC-export.{extension}"));
+    choose_export_path(handle, window, extension.into(), suggested_name, false).await
 }
 #[tauri::command]
 pub(super) async fn choose_media_save_path(

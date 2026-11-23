@@ -1,11 +1,16 @@
-# WeRC v1.2.4
+# WeRC v1.2.5
 
 适用于 Windows 10 1903 及以上 / Windows 11 x64。首次运行按全屏引导连接微信，可选授权 Bot；应用密码默认关闭。支持消息收发、资料浏览与导出、离线归档、语音转写及 HTTP / MCP 接入。
 
 ## 本版更新
 
-- 修复「设置 → 诊断 → 导出诊断报告」无法打开保存窗口的问题。系统会提供带时间戳的 JSON 文件名。
-- Fixed diagnostic report export. The Windows save dialog now offers a timestamped JSON filename.
+- 微信核心尚未加载时，自动连接会等待并重试。连接通过后恢复之前启用的本机 API。
+- 诊断记录连接结果，区分组件缺失、无法读取和校验失败；微信未连接时暂停后台补读。
+- 导出没有建议文件名时提供默认名，补齐三个通讯录接口的 OpenAPI 操作标识。
+
+- WeRC retries if WeChat is still loading its core module and restores the local API after reconnecting.
+- Diagnostics record connection results and distinguish missing, unreadable, and mismatched components. Background history recovery pauses while disconnected.
+- Export dialogs supply a default filename when needed. Three contact endpoints now have OpenAPI operation IDs.
 
 ## 兼容与使用限制
 

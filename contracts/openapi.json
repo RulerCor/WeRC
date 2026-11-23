@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "WeRC Native API",
-    "version": "1.2.4",
+    "version": "1.2.5",
     "description": "Windows 微信消息与资料接口。HTTP 和 MCP 共用同一核心；发送结果以任务状态为准，历史补读受本机数据限制。"
   },
   "servers": [
@@ -2132,6 +2132,7 @@
     },
     "/api/v1/contacts/group-names": {
       "get": {
+        "operationId": "readContactGroupNames",
         "summary": "读取已绑定账号的群标识和群名 / Read group IDs and names from the bound account",
         "description": "Requires group-names:read for the specified account. Reads the local contact cache, not a complete server directory.",
         "parameters": [{"name":"account_id","in":"query","required":true,"schema":{"type":"string"}}],
@@ -2143,6 +2144,7 @@
     },
     "/api/v1/contacts/friends": {
       "get": {
+        "operationId": "readContactFriends",
         "summary": "读取已绑定账号的好友目录 / Read the bound account's friend directory",
         "description": "Requires friends:read for the specified account. Only entries classified as friends by the local contact cache; not a complete or real-time server relationship list.",
         "parameters": [{"name":"account_id","in":"query","required":true,"schema":{"type":"string"}}],
@@ -2154,6 +2156,7 @@
     },
     "/api/v1/contacts/directory": {
       "get": {
+        "operationId": "readContactDirectory",
         "summary": "读取已绑定账号的分类通讯录 / Read the bound account's categorized directory",
         "description": "Requires directory:read. Local cache classifications only, not live server relationships.",
         "parameters": [{"name":"account_id","in":"query","required":true,"schema":{"type":"string"}}],

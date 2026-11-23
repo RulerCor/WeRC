@@ -1,6 +1,6 @@
 {
   "name": "werc-mon3trbot",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "private": true,
   "type": "module",
   "description": "Windows 微信能力桌面平台与通用原生 API",

@@ -10,7 +10,7 @@ import type {NativeStatus} from './NativeConnection';
 import {botConnection,botScopes,readScopes} from '../lib/bot-connection';
 import {readFirstRun,saveFirstRun,type FirstRunStep} from '../lib/first-run';
 import {waitForOnlineRead} from '../lib/busy-read';
-import {rememberApi,rememberConnection} from '../lib/connection-resume';
+import {nativeConnectionErrorText,rememberApi,rememberConnection} from '../lib/connection-resume';
 import {HelpTip} from '../components/HelpTip';
 import appIcon from '../../src-tauri/icons/128x128.png';
 import './first-run.css';
@@ -37,7 +37,7 @@ export function FirstRun({workbench,finish}:{workbench:Workbench;finish:(page:'h
   function next(value:FirstRunStep){saveFirstRun(value);setStep(value);setError('');}
   async function task(action:()=>Promise<void>){
     if(gate.current)return;gate.current=true;setBusy(true);setError('');
-    try{await action();}catch(e){if(mounted.current)setError(e instanceof Error?e.message:String(e));}
+    try{await action();}catch(e){if(mounted.current)setError(nativeConnectionErrorText(e));}
     finally{gate.current=false;if(mounted.current){setBusy(false);setActivity('');}await workbench.refresh().catch(()=>{});}
   }
   async function detect(){await task(async()=>{
