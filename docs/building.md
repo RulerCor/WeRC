@@ -17,3 +17,5 @@ npm run desktop:build
 - `crates/`：API、MCP、消息处理和资料读取 / API, MCP, messaging and local data
 - `native/`、`workers/`：原生适配、语音及数据组件 / Native bridge, codecs and data workers
 - `contracts/`：[OpenAPI 契约 / OpenAPI contract](../contracts/openapi.json)
+
+官方发布 / Official release: run `scripts/prepare-update.py` with the finished distribution directory and the official signing key (`TAURI_SIGNING_PRIVATE_KEY_PATH`, with its `.pub` file), or let `scripts/package-v1.py publish` invoke it. Upload `latest.json` with both signed distributions to the same GitHub Release before making it public.

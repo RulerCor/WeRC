@@ -4751,7 +4751,7 @@ checksum = "a28ac98ddc8b9274cb41bb4d9d4d5c425b6020c50c46f25559911905610b4a88"
 
 [[package]]
 name = "werc-application"
-version = "1.2.5"
+version = "1.2.6"
 dependencies = [
  "aes-gcm",
  "chrono",
@@ -4771,7 +4771,7 @@ dependencies = [
 
 [[package]]
 name = "werc-data-reader"
-version = "1.2.5"
+version = "1.2.6"
 dependencies = [
  "aes",
  "cbc",
@@ -4789,7 +4789,7 @@ dependencies = [
 
 [[package]]
 name = "werc-db-crypto"
-version = "1.2.5"
+version = "1.2.6"
 dependencies = [
  "hmac",
  "pbkdf2",
@@ -4799,7 +4799,7 @@ dependencies = [
 
 [[package]]
 name = "werc-desktop"
-version = "1.2.5"
+version = "1.2.6"
 dependencies = [
  "bzip2",
  "getrandom 0.3.4",
@@ -4829,7 +4829,7 @@ dependencies = [
 
 [[package]]
 name = "werc-domain"
-version = "1.2.5"
+version = "1.2.6"
 dependencies = [
  "chrono",
  "gif",
@@ -4851,7 +4851,7 @@ dependencies = [
 
 [[package]]
 name = "werc-http-api"
-version = "1.2.5"
+version = "1.2.6"
 dependencies = [
  "aes-gcm",
  "async-stream",
@@ -4883,7 +4883,7 @@ dependencies = [
 
 [[package]]
 name = "werc-infrastructure"
-version = "1.2.5"
+version = "1.2.6"
 dependencies = [
  "chrono",
  "hex",
@@ -4898,7 +4898,7 @@ dependencies = [
 
 [[package]]
 name = "werc-native-worker"
-version = "1.2.5"
+version = "1.2.6"
 dependencies = [
  "serde_json",
  "static_vcruntime",
@@ -4909,7 +4909,7 @@ dependencies = [
 
 [[package]]
 name = "werc-wechat-win"
-version = "1.2.5"
+version = "1.2.6"
 dependencies = [
  "aes",
  "getrandom 0.3.4",

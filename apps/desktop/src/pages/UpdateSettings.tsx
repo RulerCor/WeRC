@@ -18,8 +18,8 @@ export function UpdateSettings(){
   async function act(name:string){setBusy(true);setError('');setConfirm(false);try{setStatus(await command<UpdateStatus>(name));}catch(e){setError(e instanceof Error?e.message:String(e));}finally{setBusy(false);}}
   const active=busy||['checking','downloading','installing'].includes(status?.phase??'');
   return <details className="panel"><summary>应用更新</summary>
-    <div className="section-title"><h3>版本 {status?.current_version??'—'} <HelpTip label="应用更新说明">仅连接此版本内置的发布源。下载完成和开始安装时都会验证发布者签名。安装会关闭WeRC及其API；请先完成待处理任务。下载可取消，不影响现有版本。更新文件临时保存在系统应用缓存目录，可在缓存工具中清理。发布源和签名由发行版本提供，无需自行填写。</HelpTip></h3><span className="state-tag" role="status">{status&&!status.configured?'尚未配置发布源':labels[status?.phase??'idle']??status?.phase}</span></div>
-    {status&&!status.configured&&<p className="field">当前版本使用安装包手动更新。</p>}
+    <div className="section-title"><h3>版本 {status?.current_version??'—'} <HelpTip label="应用更新说明">WeRC 从 GitHub 自动检查、下载和安装更新。发送任务结束后会自动重启。</HelpTip></h3><span className="state-tag" role="status">{status&&!status.configured?'仅手动更新':labels[status?.phase??'idle']??status?.phase}</span></div>
+    {status&&!status.configured&&<p className="field">请从 GitHub 发布页下载新版。</p>}
     {status?.version&&<p>可用版本：{status.version}</p>}
     {status?.notes&&<details><summary>版本说明</summary><p style={{whiteSpace:'pre-wrap',overflowWrap:'anywhere'}}>{status.notes}</p></details>}
     {status?.phase==='downloading'&&<div role="status"><progress aria-label="更新下载进度" value={status.total_bytes?status.downloaded_bytes:undefined} max={status.total_bytes??undefined}/><span> {(status.downloaded_bytes/1048576).toFixed(1)} MiB{status.total_bytes?` / ${(status.total_bytes/1048576).toFixed(1)} MiB`:''}</span></div>}

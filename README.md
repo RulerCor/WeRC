@@ -12,6 +12,7 @@ A local WeChat companion for Windows, with a desktop app and bot integration.
 - 消息收发，浏览和导出聊天资料。 / Send and receive messages, browse and export chat data.
 - 离线归档、语音转写。 / Offline archives and voice transcription.
 - 本机 HTTP API 与 MCP；附离线 API 文档。 / Local HTTP API and MCP, with offline API docs.
+- 从 GitHub Release 自动更新（v1.2.6 起）。 / Automatic updates from GitHub Releases (v1.2.6+).
 
 ## 兼容性 / Compatibility
 

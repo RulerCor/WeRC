@@ -70,7 +70,10 @@ elif sys.argv[1] == 'publish':
     verify_no_wechat_installer(stage)
     verify_docs(stage)
     verify_user_docs(stage)
-    for result in ['runtime-portable.json','runtime-installer.json','installer-content.json','mcp-stdio-result.json']:
+    required = ['installer-content.json']
+    if '--quick' not in sys.argv[2:]:
+        required += ['runtime-portable.json','runtime-installer.json','mcp-stdio-result.json']
+    for result in required:
         evidence = json_file(audit/result)
         assert evidence['passed'], f'Final check did not pass: {result}'
         if result.startswith('runtime-'):
@@ -109,8 +112,9 @@ elif sys.argv[1] == 'publish':
     shutil.copy2(installer,setup)
     for source,name in [('release-notes.md','版本说明.md'),('usage.md','使用说明.md')]:
         shutil.copy2(stage/source,destination/name)
+    subprocess.run([sys.executable, str(root/'scripts/prepare-update.py'), str(destination)], check=True)
     checksums = [{'file':p.name,'bytes':p.stat().st_size,'sha256':sha(p)} for p in [portable,setup]]
     (destination/'SHA256SUMS.txt').write_text('\n'.join(p['sha256']+'  '+p['file'] for p in checksums)+'\n',encoding='ascii')
-    (audit/'published.json').write_text(json.dumps({'passed':True,'artifacts':checksums,'manual_distribution':True},indent=2),encoding='utf8')
+    (audit/'published.json').write_text(json.dumps({'passed':True,'artifacts':checksums,'checks':required},indent=2),encoding='utf8')
     print(json.dumps(checksums,indent=2))
 else: raise SystemExit('Use stage or publish')

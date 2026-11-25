@@ -4,6 +4,13 @@ use std::{path::PathBuf, time::Duration};
 use tauri_plugin_updater::{Update, UpdaterExt};
 use werc_application::ports::Repository;
 use werc_domain::AppResult;
+#[cfg(windows)]
+#[path = "portable_update.rs"]
+mod portable;
+
+const RELEASE_PAGE: &str = "https://github.com/RulerCor/WeRC/releases";
+const UPDATE_ENDPOINT: &str =
+    "https://github.com/RulerCor/WeRC/releases/latest/download/latest.json";
 const MAX_PACKAGE_BYTES: u64 = 512 * 1024 * 1024;
 
 #[derive(Clone, Serialize)]
@@ -21,7 +28,7 @@ pub(super) struct UpdateStatus {
 impl Default for UpdateStatus {
     fn default() -> Self {
         Self {
-            configured: configuration().is_ok(),
+            configured: update_target().is_some(),
             current_version: env!("CARGO_PKG_VERSION").into(),
             phase: "idle".into(),
             version: None,
@@ -69,19 +76,59 @@ fn https(value: &str) -> AppResult<reqwest::Url> {
     }
     Ok(url)
 }
-fn configuration() -> AppResult<(reqwest::Url, &'static str)> {
-    let endpoint = option_env!("WERC_UPDATE_ENDPOINT").unwrap_or("");
-    let key = option_env!("WERC_UPDATE_PUBLIC_KEY").unwrap_or("").trim();
-    if key.is_empty() {
-        return Err(error(
-            "UPDATE_NOT_CONFIGURED",
-            "此版本通过安装包手动更新，可继续使用当前版本",
-        ));
+fn update_target() -> Option<&'static str> {
+    if !cfg!(all(
+        windows,
+        target_arch = "x86_64",
+        feature = "custom-protocol"
+    )) {
+        return None;
     }
-    Ok((https(endpoint)?, key))
+    #[cfg(windows)]
+    {
+        if portable::is_portable() {
+            return Some("windows-x86_64-portable");
+        }
+        if portable::is_installed() {
+            return Some("windows-x86_64-nsis");
+        }
+    }
+    None
 }
 fn release_page() -> AppResult<reqwest::Url> {
-    https(option_env!("WERC_RELEASE_PAGE").unwrap_or(""))
+    https(RELEASE_PAGE)
+}
+
+/// Run independently of the WebView so updates work while WeRC is in the tray.
+pub(super) fn start_automatic(app: tauri::AppHandle) {
+    if update_target().is_none() {
+        return;
+    }
+    tauri::async_runtime::spawn(async move {
+        tokio::time::sleep(Duration::from_secs(30)).await;
+        loop {
+            let Ok(status) = app.state::<Updates>().status() else {
+                break;
+            };
+            let delay = match status.phase.as_str() {
+                "available" => {
+                    let _ = download_update(app.clone(), app.state()).await;
+                    5
+                }
+                "ready" => match install_update(app.clone(), app.state()).await {
+                    Err(e) if e.code == "UPDATE_TASKS_ACTIVE" => 60,
+                    _ => 6 * 60 * 60,
+                },
+                "checking" | "downloading" | "installing" => 5,
+                _ => match check_for_update(app.clone(), app.state()).await {
+                    Ok(next) if next.phase == "available" => 1,
+                    Err(e) if e.code == "BUSY" => 5,
+                    _ => 6 * 60 * 60,
+                },
+            };
+            tokio::time::sleep(Duration::from_secs(delay)).await;
+        }
+    });
 }
 fn busy(status: &UpdateStatus) -> bool {
     matches!(
@@ -157,10 +204,9 @@ pub(super) async fn check_for_update(
     app: tauri::AppHandle,
     state: State<'_, Updates>,
 ) -> AppResult<UpdateStatus> {
-    let (endpoint, key) = match configuration() {
-        Ok(c) => c,
-        Err(e) => return state.failed(e),
-    };
+    let target = update_target()
+        .ok_or_else(|| error("UPDATE_NOT_CONFIGURED", "当前程序目录不支持自动更新"))?;
+    let endpoint = https(UPDATE_ENDPOINT)?;
     {
         let mut inner = state.0.lock().map_err(|_| AppError::internal())?;
         if busy(&inner.status) {
@@ -176,7 +222,8 @@ pub(super) async fn check_for_update(
     let result = async {
         let updater = app
             .updater_builder()
-            .pubkey(key)
+            .target(target)
+            .pubkey(include_str!("../updater.pub").trim())
             .endpoints(vec![endpoint])
             .map_err(|_| error("UPDATE_NOT_CONFIGURED", "更新地址无效"))?
             .timeout(Duration::from_secs(30))
@@ -188,13 +235,15 @@ pub(super) async fn check_for_update(
                 "检查更新失败，请稍后重试或查看发布页",
             )
         })?;
-        if update
-            .as_ref()
-            .is_some_and(|u| https(u.download_url.as_str()).is_err())
-        {
+        if update.as_ref().is_some_and(|u| {
+            let url = &u.download_url;
+            url.scheme() != "https"
+                || url.host_str() != Some("github.com")
+                || !url.path().starts_with("/RulerCor/WeRC/releases/download/")
+        }) {
             return Err(error(
                 "UPDATE_SOURCE_INVALID",
-                "更新文件没有使用有效的HTTPS地址",
+                "更新文件不在 WeRC 的 GitHub 发布页",
             ));
         }
         Ok(update)
@@ -301,54 +350,86 @@ pub(super) async fn install_update(
     app: tauri::AppHandle,
     state: State<'_, Updates>,
 ) -> AppResult<UpdateStatus> {
+    let target = update_target()
+        .ok_or_else(|| error("UPDATE_NOT_CONFIGURED", "当前程序目录不支持自动更新"))?;
     let (update, package) = {
         let mut inner = state.0.lock().map_err(|_| AppError::internal())?;
         if inner.status.phase != "ready" {
             return Err(error("UPDATE_NOT_READY", "请先完成更新下载"));
         }
         let update = inner.available.clone().ok_or_else(AppError::internal)?;
+        if pending_tasks(&app.state::<DesktopState>())? {
+            return Err(tasks_active());
+        }
         let package = inner.package.take().ok_or_else(AppError::internal)?;
         inner.status.phase = "installing".into();
         (update, package)
     };
-    let result = tauri::async_runtime::spawn_blocking(move || -> AppResult<()> {
-        let bytes = std::fs::read(&package.path)
-            .map_err(|_| error("UPDATE_IO_FAILED", "更新缓存已被清理，请重新下载"))?;
-        update
-            .verify(&bytes)
-            .map_err(|_| error("UPDATE_SIGNATURE_INVALID", "更新签名无效，未启动安装"))?;
-        let desktop = app.state::<DesktopState>();
-        let api_was_enabled = desktop.application.status().api_enabled;
-        desktop.application.enable_api(false);
-        let install = (|| {
-            for account in desktop.application.accounts_local()? {
-                if desktop.repository.has_pending_tasks(&account.id)? {
-                    return Err(error(
-                        "UPDATE_TASKS_ACTIVE",
-                        "请先完成或取消待处理任务，再安装更新",
-                    ));
+    let (result, package) = tauri::async_runtime::spawn_blocking(move || {
+        let result = (|| {
+            let bytes = std::fs::read(&package.path)
+                .map_err(|_| error("UPDATE_IO_FAILED", "更新缓存已被清理，请重新下载"))?;
+            update
+                .verify(&bytes)
+                .map_err(|_| error("UPDATE_SIGNATURE_INVALID", "更新签名无效，未启动安装"))?;
+            #[cfg(windows)]
+            let staged = if target == "windows-x86_64-portable" {
+                Some(portable::stage(&app, &update.version, &bytes)?)
+            } else {
+                None
+            };
+            let desktop = app.state::<DesktopState>();
+            let api_was_enabled = desktop.application.status().api_enabled;
+            desktop.application.enable_api(false);
+            let install = (|| {
+                if pending_tasks(&desktop)? {
+                    return Err(tasks_active());
                 }
+                desktop.native_provider.disconnect(None)?;
+                desktop.application.clear_live_filehelper_local()?;
+                #[cfg(windows)]
+                if let Some(staged) = staged {
+                    staged.launch()?;
+                    let _ = std::fs::remove_file(&package.path);
+                    app.exit(0);
+                    return Ok(());
+                }
+                // The Windows updater exits this process after starting Setup.
+                let _ = std::fs::remove_file(&package.path);
+                update
+                    .install(bytes)
+                    .map_err(|_| error("UPDATE_INSTALL_FAILED", "无法启动安装程序，请查看发布页"))
+            })();
+            if install.is_err() {
+                desktop.application.enable_api(api_was_enabled);
             }
-            desktop.native_provider.disconnect(None)?;
-            desktop.application.clear_live_filehelper_local()?;
-            update.install(bytes).map_err(|_| {
-                error(
-                    "UPDATE_INSTALL_FAILED",
-                    "无法启动更新安装程序，请查看发布页",
-                )
-            })
+            install
         })();
-        if install.is_err() {
-            desktop.application.enable_api(api_was_enabled);
-        }
-        install
+        (result, package)
     })
     .await
     .map_err(|_| AppError::internal())?;
     match result {
         Ok(()) => state.status(),
+        Err(e) if e.code == "UPDATE_TASKS_ACTIVE" => {
+            let mut inner = state.0.lock().map_err(|_| AppError::internal())?;
+            inner.package = Some(package);
+            inner.status.phase = "ready".into();
+            Err(e)
+        }
         Err(e) => state.failed(e),
     }
+}
+fn pending_tasks(desktop: &DesktopState) -> AppResult<bool> {
+    for account in desktop.application.accounts_local()? {
+        if desktop.repository.has_pending_tasks(&account.id)? {
+            return Ok(true);
+        }
+    }
+    Ok(false)
+}
+fn tasks_active() -> AppError {
+    error("UPDATE_TASKS_ACTIVE", "正在发送消息，空闲后自动安装")
 }
 #[tauri::command]
 pub(super) fn open_release_page() -> AppResult<()> {

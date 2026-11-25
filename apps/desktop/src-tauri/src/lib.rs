@@ -915,7 +915,9 @@ pub fn run() {
                 let started = std::time::Instant::now();
                 let result = initialize(&handle).map_err(|e| e.to_string());
                 diagnostics::event(&handle,"lifecycle",if result.is_ok(){"STARTED"}else{"STARTUP_FAILED"},Some(started.elapsed()));
+                let ready = result.is_ok();
                 handle.state::<startup::Startup>().finish(result);
+                if ready { updates::start_automatic(handle); }
             });
             Ok(())
         })

@@ -1,16 +1,11 @@
-# WeRC v1.2.5
+# WeRC v1.2.6
 
 适用于 Windows 10 1903 及以上 / Windows 11 x64。首次运行按全屏引导连接微信，可选授权 Bot；应用密码默认关闭。支持消息收发、资料浏览与导出、离线归档、语音转写及 HTTP / MCP 接入。
 
 ## 本版更新
 
-- 微信核心尚未加载时，自动连接会等待并重试。连接通过后恢复之前启用的本机 API。
-- 诊断记录连接结果，区分组件缺失、无法读取和校验失败；微信未连接时暂停后台补读。
-- 导出没有建议文件名时提供默认名，补齐三个通讯录接口的 OpenAPI 操作标识。
-
-- WeRC retries if WeChat is still loading its core module and restores the local API after reconnecting.
-- Diagnostics record connection results and distinguish missing, unreadable, and mismatched components. Background history recovery pauses while disconnected.
-- Export dialogs supply a default filename when needed. Three contact endpoints now have OpenAPI operation IDs.
+- 自动从 GitHub Release 检查、下载并验证更新。发送任务结束后自动安装并重启 WeRC。
+- WeRC automatically downloads and verifies updates from GitHub Releases, then installs and restarts once send tasks finish.
 
 ## 兼容与使用限制
 
@@ -19,7 +14,7 @@
 - 独立在线查询支持并行，与取钥、切换来源等操作冲突时短时排队，最多等待约 30 秒，支持取消。达到并发上限或等待超时仍可能返回 BUSY；稍后重试只读请求即可。发送请求必须复用原幂等键，结果未知时先查原任务，避免重复发送。
 - “服务端接受”与“接收端确认”是不同状态；未取得送达凭据时会保留未知。
 - 默认附带 Whisper tiny 与 CPU 转写组件。其他模型可自行导入；CUDA 按需启用和下载，效果取决于设备与模型，不保证快于 CPU。Windows Hello 需要设备支持。
-- 采用手动更新，暂不提供自动更新。退出程序后替换完整程序目录，保留自己的资料目录；建议先做加密备份。
+- v1.2.5 及更早版本需要先手动升级一次。便携版自动更新只替换程序目录；资料放在独立目录。
 - 仅限非商业用途。分享时保留 `licenses` 和 `open-source-components` 中的许可证及对应开源组件资料。
 
 首次使用见 [使用说明](usage.md)；API 接入见 程序目录内的 `API接口文档.html` 和 [Bot 接入说明](bot-client.md)。

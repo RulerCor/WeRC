@@ -8,6 +8,7 @@ import type { MotionMode } from '../lib/motion';
 import {DesktopPreferences} from './DesktopPreferences';
 import type {Theme} from '../lib/theme';
 import {HelpTip} from '../components/HelpTip';
+import {UpdateSettings} from './UpdateSettings';
 
 export function Settings({ data, motion='full',setMotion,startSetup,theme='light',setTheme }: Workbench & {theme?:Theme;setTheme?:(value:Theme)=>void;motion?:MotionMode;setMotion?:(value:MotionMode)=>void;startSetup?:()=>void}) {
   const [location,setLocation]=useState('');
@@ -24,7 +25,6 @@ export function Settings({ data, motion='full',setMotion,startSetup,theme='light
     <div><dt>历史归档</dt><dd><button className="button" disabled={!desktopAvailable} onClick={startSetup}>导入快照 / 查看进度</button></dd></div>
     <div><dt>微信接入</dt><dd>连接与支持状态见“连接”和“能力”页面</dd></div>
     <div><dt>程序信息</dt><dd><details><summary>查看程序位置与使用说明</summary><dl><div><dt>当前程序</dt><dd><code>{location||'仅桌面应用可查看'}</code></dd></div>
-    <div><dt>更新方式</dt><dd>下载新版安装包，正常退出 WeRC 后安装。个人资料保存在应用数据目录。</dd></div>
     <div><dt>使用说明</dt><dd><code>usage.md</code>（程序所在目录）</dd></div></dl></details></dd></div>
-  </dl>}</div>;
+  </dl>}{section==='appearance'&&<UpdateSettings/>}</div>;
 }

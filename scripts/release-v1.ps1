@@ -3,7 +3,7 @@ $ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot 'msvc-env.ps1')
 $project=Split-Path $PSScriptRoot -Parent
 $previous=@{}
-foreach($name in @('TEMP','TMP','CARGO_TARGET_DIR','TAURI_CONFIG','WERC_UPDATE_ENDPOINT','WERC_UPDATE_PUBLIC_KEY','WERC_RELEASE_PAGE','WERC_WORKER_SHA256','WERC_SQLCIPHER_WORKER_SHA256','WERC_MESSAGE_HOST_SHA256','WERC_VOICE_CODEC_SHA256','WERC_EMOTICON_CODEC_SHA256','CARGO_BUILD_JOBS')) {
+foreach($name in @('TEMP','TMP','CARGO_TARGET_DIR','TAURI_CONFIG','WERC_WORKER_SHA256','WERC_SQLCIPHER_WORKER_SHA256','WERC_MESSAGE_HOST_SHA256','WERC_VOICE_CODEC_SHA256','WERC_EMOTICON_CODEC_SHA256','CARGO_BUILD_JOBS')) {
     $previous[$name]=[Environment]::GetEnvironmentVariable($name,'Process')
 }
 function Sha([string]$Path){(Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLowerInvariant()}
@@ -17,7 +17,6 @@ try {
     $env:TMP=$env:TEMP
     New-Item -ItemType Directory -Force $env:TEMP | Out-Null
     Remove-Item Env:TAURI_CONFIG -ErrorAction SilentlyContinue
-    foreach($name in @('WERC_UPDATE_ENDPOINT','WERC_UPDATE_PUBLIC_KEY','WERC_RELEASE_PAGE')){Remove-Item -LiteralPath ('Env:'+$name) -ErrorAction SilentlyContinue}
     if(-not $BundleOnly){
         $destination=Join-Path $project 'target/release'
         $bridgeRoot=Join-Path $project 'target/components/message-bridge'
